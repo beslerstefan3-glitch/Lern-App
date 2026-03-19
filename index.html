@@ -3,36 +3,63 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gewerblich-Technische Lern-App</title>
+    <title>IHK Akademie Schwaben - Technik-Lern-App</title>
     <style>
         :root {
-            --teams-bg: #f5f5f5;
-            --teams-brand: #4b53bc;
-            --teams-neutral-bg: #ffffff;
-            --teams-text: #242424;
-            --teams-text-sec: #616161;
+            /* --- IHK AKADEMIE SCHWABEN BRANDING FARBEN --- */
+            --ihk-blau: #00457D;      /* Das offizielle IHK Blau */
+            --ihk-rot: #E3001B;       /* Das IHK Rot für Akzente */
+            --ihk-grau-bg: #F0F2F5;   /* Heller Hintergrund */
+            --ihk-weiss: #FFFFFF;
+            --ihk-text: #1D1D1B;      /* Fast Schwarz für Text */
+            --ihk-text-sec: #575756;  /* Dunkelgrau für Sekundärtext */
+            
+            /* Funktionsfarben (Bleiben für Usability gleich) */
             --success: #107c10;
             --error: #a4262c;
         }
 
         body {
-            font-family: 'Segoe UI', system-ui, sans-serif;
-            background-color: var(--teams-bg);
-            margin: 0; padding: 0; display: flex; height: 100vh; color: var(--teams-text);
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background-color: var(--ihk-grau-bg);
+            margin: 0; padding: 0; display: flex; height: 100vh; color: var(--ihk-text);
         }
 
-        /* Teams Layout Simulation */
-        .teams-sidebar { width: 64px; background-color: var(--teams-brand); display: flex; flex-direction: column; align-items: center; padding-top: 20px; }
+        /* Teams Layout Simulation (Jetzt im IHK-Blau) */
+        .teams-sidebar { width: 64px; background-color: var(--ihk-blau); display: flex; flex-direction: column; align-items: center; padding-top: 20px; }
         .sidebar-icon { font-size: 20px; margin-bottom: 25px; opacity: 0.7; color: white; cursor: pointer; }
-        .main-container { flex: 1; display: flex; flex-direction: column; }
-        .teams-topbar { height: 48px; background-color: var(--teams-brand); display: flex; align-items: center; padding: 0 20px; color: white; }
+        .sidebar-icon:hover { opacity: 1; }
         
+        .main-container { flex: 1; display: flex; flex-direction: column; }
+        .teams-topbar { height: 48px; background-color: var(--ihk-blau); display: flex; align-items: center; padding: 0 20px; color: white; border-bottom: 1px solid rgba(255,255,255,0.2); }
+        .topbar-title { font-weight: 600; font-size: 14px; }
+
         /* App Content */
         .app-content { flex: 1; padding: 30px; overflow-y: auto; }
-        .app-header { display: flex; justify-content: space-between; align-items: center; background: var(--teams-neutral-bg); padding: 15px 25px; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); margin-bottom: 25px; }
+        
+        /* Gebrandeter Header mit IHK-Logo */
+        .app-header { 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            background: var(--ihk-weiss); 
+            padding: 15px 25px; 
+            border-radius: 8px; 
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05); 
+            margin-bottom: 25px; 
+            border-bottom: 3px solid var(--ihk-rot); /* Roter Akzent-Strich */
+        }
+        
+        /* IHK Logo Einbindung */
+        .ihk-logo {
+            height: 40px; /* Höhe anpassen, falls nötig */
+            width: auto;
+            display: block;
+        }
+        
         .score-badge { color: #f59e0b; font-weight: bold; font-size: 1.2rem; display: flex; align-items: center; gap: 8px; }
 
-        /* Dashboard Grid (3 Spalten Fokus) */
+        /* Dashboard Grid */
         .topics-grid { 
             display: grid; 
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); 
@@ -42,7 +69,7 @@
         }
 
         .topic-card { 
-            background: var(--teams-neutral-bg); 
+            background: var(--ihk-weiss); 
             border-radius: 12px; 
             padding: 30px 20px; 
             text-align: center; 
@@ -55,27 +82,44 @@
             align-items: center;
         }
 
-        .topic-card:hover { transform: translateY(-3px); box-shadow: 0 4px 12px rgba(0,0,0,0.12); }
-        .topic-card.active { border-color: var(--teams-brand); background-color: #f0f1fa; }
-        .topic-icon { font-size: 3rem; display: block; margin-bottom: 15px; }
-        .topic-name { font-weight: 600; font-size: 1.1rem; }
+        .topic-card:hover { transform: translateY(-3px); box-shadow: 0 4px 12px rgba(0,0,0,0.12); border-color: #d0d0d0; }
         
+        /* Aktive Kachel jetzt im IHK-Blau */
+        .topic-card.active { border-color: var(--ihk-blau); background-color: #e6f0f8; }
+        
+        .topic-icon { font-size: 3rem; display: block; margin-bottom: 15px; }
+        .topic-name { font-weight: 600; font-size: 1.1rem; color: var(--ihk-text); }
+        
+        /* Start-Button im IHK-Rot */
         .start-quiz-btn { 
             grid-column: 1 / -1; 
-            background-color: var(--teams-brand); 
+            background-color: var(--ihk-rot); 
             color: white; border: none; padding: 20px; 
             border-radius: 12px; font-size: 1.3rem; font-weight: bold; cursor: pointer; 
+            transition: 0.2s;
         }
+        .start-quiz-btn:hover { background-color: #c40018; }
         .start-quiz-btn:disabled { background-color: #ccc; cursor: not-allowed; }
 
         /* Quiz View */
-        .quiz-view { display: none; background: var(--teams-neutral-bg); border-radius: 12px; padding: 40px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
-        .option-btn { width: 100%; padding: 15px; margin: 8px 0; border: 2px solid #eee; border-radius: 8px; cursor: pointer; text-align: left; font-size: 1.1rem; background: white; transition: 0.2s; }
-        .option-btn:hover { background: #f9f9f9; }
+        .quiz-view { display: none; background: var(--ihk-weiss); border-radius: 12px; padding: 40px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        
+        /* Antwort-Button Styling */
+        .option-btn { width: 100%; padding: 15px; margin: 8px 0; border: 2px solid #eee; border-radius: 8px; cursor: pointer; text-align: left; font-size: 1.1rem; background: white; transition: 0.2s; color: var(--ihk-text); }
+        .option-btn:hover { border-color: var(--ihk-blau); background: #f9f9f9; }
+        
+        /* Richtig/Falsch Farben bleiben wegen Signalwirkung */
         .option-btn.correct { border-color: var(--success); background: #dff6dd; color: var(--success); font-weight: bold; }
         .option-btn.wrong { border-color: var(--error); background: #fde7e9; color: var(--error); }
+        
         .feedback { margin-top: 25px; padding: 15px; border-radius: 8px; display: none; font-weight: 500; }
         
+        /* Navigations-Buttons */
+        .back-link { border:none; background:none; color:var(--ihk-blau); cursor:pointer; margin-bottom:20px; font-weight:bold; font-size: 1rem; padding: 0;}
+        .next-btn { margin-top:25px; padding:12px 25px; background:var(--ihk-blau); color:white; border:none; border-radius:6px; cursor:pointer; font-weight:bold; transition: 0.2s; }
+        .next-btn:hover { background-color: #003a69; }
+
+        /* Bilder im Quiz */
         img.quiz-img { width: 100%; max-height: 250px; object-fit: contain; margin-bottom: 15px; border-radius: 8px; border: 1px solid #ddd; }
     </style>
 </head>
@@ -86,27 +130,28 @@
     </div>
 
     <div class="main-container">
-        <div class="teams-topbar"><span>Microsoft Teams - Ausbildungscenter</span></div>
+        <div class="teams-topbar"><span class="topbar-title">IHK Akademie Schwaben - Digitales Lernportal</span></div>
 
         <div class="app-content">
             <div class="app-header">
-                <h1 style="margin:0; font-size: 1.4rem;">Gewerblich-Technische Lern-App</h1>
+                <img src="https://www.ihk-akademie-schwaben.de/fileadmin/templates/images/logo_ihk_akademie_schwaben.png" alt="IHK Akademie Schwaben Logo" class="ihk-logo">
                 <div class="score-badge">🏆 <span id="totalScore">0 Punkte</span></div>
             </div>
 
             <div id="dashboardView">
-                <p style="color: var(--teams-text-sec); font-size: 1.1rem;">Willkommen! Welches Thema möchtest du heute vertiefen?</p>
+                <h1 style="margin: 0 0 10px 0; font-size: 1.5rem; color: var(--ihk-blau);">Technik-Lern-App</h1>
+                <p style="color: var(--ihk-text-sec); font-size: 1.1rem; margin-top: 0;">Willkommen! Welches Thema möchtest du heute vertiefen?</p>
                 <div class="topics-grid" id="topicsGrid"></div>
                 <button class="start-quiz-btn" id="startBtn" onclick="startQuiz()" disabled>QUIZ STARTEN</button>
             </div>
 
             <div id="quizView" class="quiz-view">
-                <button onclick="showDashboard()" style="border:none; background:none; color:var(--teams-brand); cursor:pointer; margin-bottom:20px; font-weight:bold;">⬅ Zurück zum Dashboard</button>
+                <button onclick="showDashboard()" class="back-link">⬅ Zurück zum Dashboard</button>
                 <div id="quizContent">
-                    <h2 id="questionText">Frage...</h2>
+                    <h2 id="questionText" style="color: var(--ihk-blau); margin-top: 0;">Frage...</h2>
                     <div id="optionsContainer"></div>
                     <div id="feedbackBox" class="feedback"></div>
-                    <button id="nextBtn" onclick="nextQuestion()" style="display:none; margin-top:25px; padding:12px 25px; background:var(--teams-brand); color:white; border:none; border-radius:6px; cursor:pointer; font-weight:bold;">Nächste Frage ➡</button>
+                    <button id="nextBtn" onclick="nextQuestion()" class="next-btn">Nächste Frage ➡</button>
                 </div>
             </div>
         </div>
@@ -123,12 +168,6 @@
             q: "Was bedeutet die Abkürzung 'SPS'?", 
             options: ["Sicherheits-Prüf-System", "Speicherprogrammierbare Steuerung", "Serielle Prozess-Steuerung"], 
             correct: 1, hint: "Auf Englisch heißt es PLC (Programmable Logic Controller)." 
-        },
-        { 
-            topic: "Steuerungstechnik", level: 2, 
-            q: "Welches Ventil benötigt an BEIDEN Eingängen Druck, um ein Signal auszugeben?", 
-            options: ["Wechselventil (ODER)", "Zweidruckventil (UND)", "3/2-Wegeventil"], 
-            correct: 1, hint: "Das Zweidruckventil realisiert die logische UND-Verknüpfung." 
         },
         { 
             topic: "Metalltechnik", level: 1, 
