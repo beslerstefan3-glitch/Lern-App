@@ -4,115 +4,62 @@
     <meta charset="UTF-8">
     <title>IHK Akademie Schwaben Lern-App</title>
     <style>
-        /* Grundfarben */
         :root {
             --ihk-blau: #00457D;
             --ihk-rot: #E3001B;
+            --text-main: #1D1D1B; /* Dunkle Schrift für Sichtbarkeit */
         }
 
         body {
-            margin: 0;
-            padding: 0;
-            font-family: sans-serif;
-            /* Hintergrund: Erst das Bild, dann die Farbe Blau als Backup */
-            background: url('hintergrund.jpg') center/cover no-repeat fixed var(--ihk-blau);
-            color: white;
-            display: flex;
-            height: 100vh;
+            margin: 0; padding: 0; font-family: 'Segoe UI', sans-serif;
+            background: url('hintergrund.jpg') center/cover no-repeat fixed #f0f2f5;
+            color: var(--text-main);
+            display: flex; height: 100vh;
         }
 
-        /* Sidebar */
-        .sidebar {
-            width: 60px;
-            background: rgba(0, 69, 125, 0.8);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            padding-top: 20px;
+        .sidebar { width: 64px; background: var(--ihk-blau); display: flex; flex-direction: column; align-items: center; padding-top: 20px; }
+        .main { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+        .topbar { height: 48px; background: var(--ihk-blau); color: white; display: flex; align-items: center; padding: 0 20px; font-size: 14px; }
+
+        .app-content { flex: 1; padding: 30px; overflow-y: auto; }
+
+        /* Header weiß mit Schatten, damit er auf jedem Bild sichtbar ist */
+        .header { 
+            background: white; padding: 15px 25px; border-radius: 12px; 
+            display: flex; justify-content: space-between; align-items: center;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1); margin-bottom: 30px;
+            border-bottom: 3px solid var(--ihk-rot);
         }
 
-        /* Hauptbereich */
-        .main {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            padding: 20px;
-            overflow-y: auto;
-        }
+        .logo { height: 35px; }
 
-        /* Header mit Logo */
-        .header {
-            background: rgba(255, 255, 255, 0.15);
-            backdrop-filter: blur(10px);
-            padding: 20px;
-            border-radius: 10px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            margin-bottom: 20px;
-        }
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 20px; }
 
-        .logo { height: 40px; filter: brightness(0) invert(1); }
-
-        /* Kacheln */
-        .grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-            gap: 20px;
-        }
-
+        /* Kacheln leicht grau, damit sie sich vom weißen Hintergrund abheben */
         .card {
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(15px);
-            padding: 30px;
-            border-radius: 15px;
-            text-align: center;
-            cursor: pointer;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            transition: 0.3s;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 15px; padding: 30px; text-align: center;
+            cursor: pointer; border: 1px solid #ddd; transition: 0.3s;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
         }
 
-        .card:hover { background: rgba(255, 255, 255, 0.2); transform: translateY(-5px); }
-        .card.active { border: 3px solid var(--ihk-rot); background: rgba(255, 255, 255, 0.25); }
+        .card:hover { transform: translateY(-5px); box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
+        .card.active { border: 3px solid var(--ihk-rot); background: #fff5f5; }
+
+        .icon { font-size: 3rem; margin-bottom: 10px; display: block; }
+        .topic-name { font-weight: bold; color: var(--ihk-blau); }
 
         .btn-start {
-            width: 100%;
-            background: var(--ihk-rot);
-            color: white;
-            border: none;
-            padding: 20px;
-            border-radius: 10px;
-            font-size: 1.2rem;
-            font-weight: bold;
-            cursor: pointer;
-            margin-top: 20px;
+            width: 100%; background: var(--ihk-rot); color: white; border: none;
+            padding: 20px; border-radius: 12px; font-size: 1.2rem; font-weight: bold;
+            cursor: pointer; margin-top: 30px; box-shadow: 0 4px 10px rgba(227,0,27,0.3);
         }
+        .btn-start:disabled { background: #ccc; box-shadow: none; cursor: not-allowed; }
 
-        .btn-start:disabled { background: rgba(255,255,255,0.2); color: rgba(255,255,255,0.5); }
-
-        /* Quiz Ansicht */
-        .quiz {
-            display: none;
-            background: rgba(0,0,0,0.6);
-            padding: 30px;
-            border-radius: 15px;
-            backdrop-filter: blur(20px);
-        }
-
-        .opt {
-            width: 100%;
-            padding: 15px;
-            margin: 10px 0;
-            background: rgba(255,255,255,0.1);
-            border: 1px solid white;
-            color: white;
-            border-radius: 8px;
-            text-align: left;
-            cursor: pointer;
-        }
-
-        .opt:hover { background: rgba(255,255,255,0.2); }
+        /* Quiz */
+        .quiz { display: none; background: white; padding: 40px; border-radius: 15px; box-shadow: 0 5px 20px rgba(0,0,0,0.2); }
+        .opt { width: 100%; padding: 15px; margin: 10px 0; border: 1px solid #ddd; border-radius: 8px; text-align: left; cursor: pointer; font-size: 1.1rem; }
+        .opt:hover { background: #f9f9f9; border-color: var(--ihk-blau); }
     </style>
 </head>
 <body>
@@ -120,33 +67,40 @@
     <div class="sidebar">🏠<br><br>💬<br><br>👥</div>
 
     <div class="main">
-        <div class="header">
-            <img src="https://www.ihk-akademie-schwaben.de/fileadmin/templates/images/logo_ihk_akademie_schwaben.png" class="logo">
-            <span id="score">Punkte: 0</span>
-        </div>
+        <div class="topbar">IHK Akademie Schwaben - Digitales Lernportal</div>
+        
+        <div class="app-content">
+            <div class="header">
+                <img src="https://www.ihk-akademie-schwaben.de/fileadmin/templates/images/logo_ihk_akademie_schwaben.png" class="logo">
+                <span style="font-weight: bold; color: #f59e0b;">🏆 <span id="score">0 Punkte</span></span>
+            </div>
 
-        <div id="dash">
-            <h1>Lern-App</h1>
-            <div class="grid" id="topics"></div>
-            <button class="btn-start" id="sBtn" onclick="startQuiz()" disabled>QUIZ STARTEN</button>
-        </div>
+            <div id="dash">
+                <h1 style="color: var(--ihk-blau);">Gewerblich-Technische Lern-App</h1>
+                <p style="color: #666;">Wähle ein Thema aus:</p>
+                <div class="grid" id="topics"></div>
+                <button class="btn-start" id="sBtn" onclick="startQuiz()" disabled>QUIZ STARTEN</button>
+            </div>
 
-        <div id="qView" class="quiz">
-            <button onclick="showDash()" style="color:white; background:none; border:none; cursor:pointer;">⬅ Zurück</button>
-            <h2 id="qText">Frage...</h2>
-            <div id="options"></div>
+            <div id="qView" class="quiz">
+                <button onclick="showDash()" style="color:var(--ihk-blau); background:none; border:none; cursor:pointer; font-weight:bold;">⬅ Zurück</button>
+                <h2 id="qText" style="color: var(--ihk-blau);">Frage...</h2>
+                <div id="options"></div>
+            </div>
         </div>
     </div>
 
 <script>
     const data = [
+        { t: "Steuerungstechnik", q: "Was bedeutet SPS?", o: ["Sicherheits-System", "Speicherprogrammierbare Steuerung", "Serielle Steuerung"], c: 1 },
         { t: "Metalltechnik", q: "Welches Werkzeug nutzt man zum Anreißen?", o: ["Hammer", "Reißnadel", "Feile"], c: 1 },
-        { t: "Steuerungstechnik", q: "Was bedeutet SPS?", o: ["Sicherheits-System", "Speicherprogrammierbare Steuerung", "Sensor-System"], c: 1 },
-        { t: "Elektrotechnik", q: "Einheit des Widerstands?", o: ["Volt", "Ampere", "Ohm"], c: 2 }
+        { t: "Elektrotechnik", q: "Einheit des Widerstands?", o: ["Volt", "Ampere", "Ohm"], c: 2 },
+        { t: "Techn. Kommunikation", q: "Was bedeutet die Abkürzung 'CAD'?", o: ["Computer Aided Design", "Control Analog Drive", "Central Auto Data"], c: 0 },
+        { t: "Fachrechnen", q: "Berechne 10% von 500.", o: ["5", "50", "500"], c: 1 }
     ];
 
     let sel = null;
-    const icons = { "Metalltechnik": "⚙️", "Steuerungstechnik": "🕹️", "Elektrotechnik": "⚡" };
+    const icons = { "Metalltechnik": "⚙️", "Steuerungstechnik": "🕹️", "Elektrotechnik": "⚡", "Techn. Kommunikation": "🖌️", "Fachrechnen": "📐" };
 
     function init() {
         const g = document.getElementById('topics');
@@ -155,7 +109,7 @@
         ts.forEach(t => {
             const div = document.createElement('div');
             div.className = 'card';
-            div.innerHTML = `<div style="font-size:3rem">${icons[t]||'📚'}</div><br><b>${t}</b>`;
+            div.innerHTML = `<span class="icon">${icons[t]||'📚'}</span><span class="topic-name">${t}</span>`;
             div.onclick = () => {
                 document.querySelectorAll('.card').forEach(c => c.classList.remove('active'));
                 div.classList.add('active'); sel = t;
