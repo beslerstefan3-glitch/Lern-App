@@ -3,149 +3,277 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>IHK Lern-App</title>
+    <title>IHK Akademie Schwaben - Technik-Lern-App</title>
     <style>
         :root {
+            /* --- IHK Brand Farben --- */
             --ihk-blau: #00457D;
             --ihk-rot: #E3001B;
-            --ihk-gelb: #FFCC00; /* Der gelbe Stuhl-Akzent */
+            --text-hell: #FFFFFF;
+            --text-dunkel: #1D1D1B;
+            
+            /* Funktionsfarben */
+            --success: #107c10;
+            --error: #a4262c;
         }
 
+        /* --- GESAMT-HINTERGRUND MIT DEM ORIGINAL IHK-STUHL-BILD --- */
         body {
-            margin: 0; padding: 0; font-family: 'Segoe UI', sans-serif;
-            /* Wir simulieren das Stuhl-Bild mit einem blauen Verlauf */
-            background: linear-gradient(135deg, #00457D 0%, #2980b9 100%);
+            font-family: 'Segoe UI', Arial, sans-serif;
+            margin: 0; padding: 0; display: flex; height: 100vh;
+            color: var(--text-hell); /* Grundtextfarbe ist weiß für besseren Kontrast */
+            
+            /* WICHTIG: DIREKTER LINK ZUM ORIGINAL-BILD DER IHK AKADEMIE */
+            background-image: url('https://www.ihk-akademie-schwaben.de/fileadmin/_processed_/3/7/csm_Stuehle_Header_8d5d4d38c6.jpg'); 
+            
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
             background-attachment: fixed;
-            display: flex; height: 100vh; color: #333;
+            
+            /* Backup-Farbe, falls das Bild nicht lädt */
+            background-color: var(--ihk-blau); 
         }
 
-        /* Gelber Akzent-Punkt im Hintergrund (simuliert den gelben Stuhl) */
-        body::after {
-            content: ""; position: fixed; bottom: -100px; right: 10%;
-            width: 300px; height: 300px; background: var(--ihk-gelb);
-            filter: blur(80px); opacity: 0.4; z-index: -1;
+        /* Teams Sidebar Simulation (Bleibt gleich) */
+        .teams-sidebar { width: 64px; background-color: rgba(0, 69, 125, 0.8); display: flex; flex-direction: column; align-items: center; padding-top: 20px; }
+        .sidebar-icon { font-size: 20px; margin-bottom: 25px; opacity: 0.7; color: white; cursor: pointer; }
+        .sidebar-icon:hover { opacity: 1; }
+        
+        .main-container { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+
+        /* --- SEMI-TRANSPARENTE TOPBAR --- */
+        .teams-topbar { 
+            height: 48px; 
+            background-color: rgba(0, 69, 125, 0.7); /* Halb-transparentes Blau */
+            backdrop-filter: blur(5px); /* Unscharfer Glas-Effekt */
+            display: flex; 
+            align-items: center; 
+            padding: 0 20px; 
+            color: white; 
+            border-bottom: 1px solid rgba(255,255,255,0.1);
         }
+        .topbar-title { font-weight: 600; font-size: 14px; }
 
-        .sidebar { width: 64px; background: rgba(0,0,0,0.2); display: flex; flex-direction: column; align-items: center; padding-top: 20px; }
-        .main { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
-        .topbar { height: 48px; background: var(--ihk-blau); color: white; display: flex; align-items: center; padding: 0 20px; font-weight: bold; }
-
+        /* App Content Area */
         .app-content { flex: 1; padding: 30px; overflow-y: auto; }
+        
+        /* --- BRANDING HEADER IM GLASS-MORPHISM LOOK --- */
+        .app-header { 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            background: rgba(255, 255, 255, 0.1); /* Sehr helles, transparentes Weiß */
+            backdrop-filter: blur(10px); /* Starker Glas-Effekt */
+            padding: 15px 25px; 
+            border-radius: 12px; 
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2); 
+            margin-bottom: 25px; 
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        
+        /* IHK Logo (Negativ/Weiß für dunklen Grund) */
+        .ihk-logo {
+            height: 40px;
+            width: auto;
+            display: block;
+            filter: brightness(0) invert(1); /* Macht das Logo weiß */
+        }
+        
+        .score-badge { color: #f59e0b; font-weight: bold; font-size: 1.2rem; display: flex; align-items: center; gap: 8px; }
 
-        .header { 
-            background: white; padding: 20px; border-radius: 12px; 
-            display: flex; justify-content: space-between; align-items: center;
-            box-shadow: 0 8px 24px rgba(0,0,0,0.2); margin-bottom: 30px;
+        /* Dashboard Grid */
+        .topics-grid { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); 
+            gap: 25px; 
+            margin-top: 20px; 
+            margin-bottom: 30px;
         }
 
-        .logo-text { color: var(--ihk-blau); font-weight: bold; font-size: 1.2rem; }
-
-        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; }
-
-        .card {
-            background: rgba(255, 255, 255, 0.95);
-            border-radius: 15px; padding: 30px; text-align: center;
-            cursor: pointer; border: none; transition: 0.3s;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        /* --- KACHELN IM "GLASS-MORPHISM" LOOK (Semi-Transparent) --- */
+        .topic-card { 
+            background: rgba(255, 255, 255, 0.15); /* Semi-transparentes Weiß */
+            backdrop-filter: blur(15px); /* Unscharfer Hintergrund-Effekt */
+            border-radius: 16px; 
+            padding: 35px 25px; 
+            text-align: center; 
+            box-shadow: 0 6px 18px rgba(0,0,0,0.25); 
+            cursor: pointer; 
+            transition: transform 0.2s, box-shadow 0.2s, background 0.2s; 
+            border: 1px solid rgba(255,255,255,0.1);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
 
-        .card:hover { transform: translateY(-5px); box-shadow: 0 8px 20px rgba(0,0,0,0.2); }
-        .card.active { border: 4px solid var(--ihk-gelb); background: white; }
-
-        .icon { font-size: 3rem; margin-bottom: 10px; display: block; }
-        .topic-name { font-weight: bold; color: var(--ihk-blau); font-size: 1.1rem; }
-
-        .btn-start {
-            width: 100%; background: var(--ihk-rot); color: white; border: none;
-            padding: 20px; border-radius: 12px; font-size: 1.3rem; font-weight: bold;
-            cursor: pointer; margin-top: 30px; box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+        .topic-card:hover { 
+            transform: translateY(-5px); 
+            box-shadow: 0 8px 25px rgba(0,0,0,0.3); 
+            background: rgba(255, 255, 255, 0.2); 
         }
-        .btn-start:disabled { background: #999; cursor: not-allowed; opacity: 0.5; }
+        
+        /* Aktive Kachel mit IHK-Rotem Rand */
+        .topic-card.active { 
+            border-color: var(--ihk-rot); 
+            background: rgba(255, 255, 255, 0.25); 
+        }
+        
+        .topic-icon { font-size: 3.5rem; display: block; margin-bottom: 18px; }
+        .topic-name { font-weight: 600; font-size: 1.2rem; color: var(--text-hell); text-shadow: 1px 1px 3px rgba(0,0,0,0.5); }
+        
+        /* Start-Button (Rot, Semi-Transparent) */
+        .start-quiz-btn { 
+            grid-column: 1 / -1; 
+            background-color: rgba(227, 0, 27, 0.8); /* Semi-transparentes IHK Rot */
+            backdrop-filter: blur(5px);
+            color: white; border: none; padding: 22px; 
+            border-radius: 12px; font-size: 1.3rem; font-weight: bold; cursor: pointer; 
+            transition: 0.2s;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+        }
+        .start-quiz-btn:hover { background-color: var(--ihk-rot); }
+        .start-quiz-btn:disabled { background-color: rgba(204, 204, 204, 0.5); cursor: not-allowed; }
 
-        .quiz { display: none; background: white; padding: 40px; border-radius: 15px; }
-        .opt { width: 100%; padding: 15px; margin: 10px 0; border: 2px solid #eee; border-radius: 8px; text-align: left; cursor: pointer; font-size: 1.1rem; background: white; }
-        .opt:hover { border-color: var(--ihk-blau); background: #f0f7ff; }
+        /* Quiz View (Ebenfalls Glass-Look) */
+        .quiz-view { 
+            display: none; 
+            background: rgba(0, 0, 0, 0.5); /* Dunklerer Glas-Effekt für Fragen */
+            backdrop-filter: blur(15px);
+            border-radius: 12px; 
+            padding: 40px; 
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3); 
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        
+        /* Antwort-Button Styling */
+        .option-btn { width: 100%; padding: 15px; margin: 8px 0; border: 1px solid rgba(255,255,255,0.2); border-radius: 8px; cursor: pointer; text-align: left; font-size: 1.1rem; background: rgba(255, 255, 255, 0.1); transition: 0.2s; color: var(--text-hell); }
+        .option-btn:hover { border-color: var(--ihk-blau); background: rgba(255, 255, 255, 0.2); }
+        
+        .option-btn.correct { border-color: var(--success); background: rgba(223, 246, 221, 0.2); color: var(--success); font-weight: bold; }
+        .option-btn.wrong { border-color: var(--error); background: rgba(253, 231, 233, 0.2); color: var(--error); }
+        
+        .feedback { margin-top: 25px; padding: 15px; border-radius: 8px; display: none; font-weight: 500; }
+        
+        .back-link { border:none; background:none; color:var(--text-hell); opacity: 0.8; cursor:pointer; margin-bottom:20px; font-weight:bold; font-size: 1rem; padding: 0;}
+        .next-btn { margin-top:25px; padding:12px 25px; background:rgba(0, 69, 125, 0.8); color:white; border:none; border-radius:6px; cursor:pointer; font-weight:bold; transition: 0.2s; }
+
+        img.quiz-img { width: 100%; max-height: 250px; object-fit: contain; margin-bottom: 15px; border-radius: 8px; border: 1px solid #ddd; }
     </style>
 </head>
 <body>
 
-    <div class="sidebar">🏠<br><br>💬<br><br>👥</div>
+    <div class="teams-sidebar">
+        <div class="sidebar-icon">🏠</div><div class="sidebar-icon">💬</div><div class="sidebar-icon">👥</div>
+    </div>
 
-    <div class="main">
-        <div class="topbar">IHK AKADEMIE SCHWABEN - LERNPORTAL</div>
-        
+    <div class="main-container">
+        <div class="teams-topbar"><span class="topbar-title">IHK Akademie Schwaben - Digitales Lernportal</span></div>
+
         <div class="app-content">
-            <div class="header">
-                <div class="logo-text">IHK Akademie Schwaben</div>
-                <div style="color: #f59e0b; font-weight: bold;">🏆 Punkte: <span id="score">0</span></div>
+            <div class="app-header">
+                <img src="https://www.ihk-akademie-schwaben.de/fileadmin/templates/images/logo_ihk_akademie_schwaben.png" alt="IHK Akademie Schwaben Logo" class="ihk-logo">
+                <div class="score-badge">🏆 <span id="totalScore">0 Punkte</span></div>
             </div>
 
-            <div id="dash">
-                <h1 style="color: white; text-shadow: 2px 2px 4px rgba(0,0,0,0.3);">Gewerblich-Technische Lern-App</h1>
-                <div class="grid" id="topics"></div>
-                <button class="btn-start" id="sBtn" onclick="startQuiz()" disabled>QUIZ STARTEN</button>
+            <div id="dashboardView">
+                <h1 style="margin: 0 0 10px 0; font-size: 1.5rem; color: var(--text-hell); text-shadow: 2px 2px 4px rgba(0,0,0,0.5);">Gewerblich-Technische Lern-App</h1>
+                <p style="color: rgba(255,255,255,0.8); font-size: 1.1rem; margin-top: 0; text-shadow: 1px 1px 2px rgba(0,0,0,0.5);">Willkommen! Welches Thema möchtest du heute vertiefen?</p>
+                <div class="topics-grid" id="topicsGrid"></div>
+                <button class="start-quiz-btn" id="startBtn" onclick="startQuiz()" disabled>QUIZ STARTEN</button>
             </div>
 
-            <div id="qView" class="quiz">
-                <button onclick="location.reload()" style="background:none; border:none; color:var(--ihk-blau); cursor:pointer; font-weight:bold; margin-bottom:20px;">⬅ Zurück</button>
-                <h2 id="qText" style="color: var(--ihk-blau);">Frage...</h2>
-                <div id="options"></div>
+            <div id="quizView" class="quiz-view">
+                <button onclick="showDashboard()" class="back-link">⬅ Zurück zum Dashboard</button>
+                <div id="quizContent">
+                    <h2 id="questionText" style="color: var(--text-hell); margin-top: 0;">Frage...</h2>
+                    <div id="optionsContainer"></div>
+                    <div id="feedbackBox" class="feedback"></div>
+                    <button id="nextBtn" onclick="nextQuestion()" class="next-btn">Nächste Frage ➡</button>
+                </div>
             </div>
         </div>
     </div>
 
 <script>
-    const data = [
-        { t: "Steuerungstechnik", q: "Was bedeutet SPS?", o: ["Sicherheits-System", "Speicherprogrammierbare Steuerung", "Serielle Steuerung"], c: 1 },
-        { t: "Metalltechnik", q: "Welches Werkzeug nutzt man zum Anreißen?", o: ["Hammer", "Reißnadel", "Feile"], c: 1 },
-        { t: "Elektrotechnik", q: "Einheit des Widerstands?", o: ["Volt", "Ampere", "Ohm"], c: 2 },
-        { t: "Fachrechnen", q: "10% von 500?", o: ["5", "50", "500"], c: 1 }
+    // ============================================================
+    // AUSBILDER-BEREICH: FRAGEN-KATALOG
+    // ============================================================
+    
+    const allQuestions = [
+        { topic: "Steuerungstechnik", level: 1, q: "Was bedeutet die Abkürzung 'SPS'?", options: ["Sicherheits-Prüf-System", "Speicherprogrammierbare Steuerung", "Serielle Prozess-Steuerung"], correct: 1, hint: "Englisch: PLC (Programmable Logic Controller)." },
+        { topic: "Metalltechnik", level: 1, q: "Welches Werkzeug nutzt man zum Anreißen?", options: ["Bleistift", "Reißnadel", "Feile"], correct: 1, hint: "Die gehärtete Spitze der Reißnadel ritzt die Oberfläche an." },
+        { topic: "Elektrotechnik", level: 1, q: "In welcher Einheit wird der elektrische Widerstand gemessen?", options: ["Volt", "Ampere", "Ohm"], correct: 2, hint: "Die Einheit ist Ohm (Ω)." },
+        { topic: "Fachrechnen", level: 2, q: "Berechne die Schnittgeschwindigkeit v bei d=20mm und n=500 U/min.", options: ["v = 31,4 m/min", "v = 15,7 m/min", "v = 62,8 m/min"], correct: 0, hint: "Formel: v = d * π * n / 1000" }
     ];
 
-    let sel = null;
-    const icons = { "Metalltechnik": "⚙️", "Steuerungstechnik": "🕹️", "Elektrotechnik": "⚡", "Fachrechnen": "📐" };
+    // ============================================================
+    // APP LOGIK (Bleibt unverändert)
+    // ============================================================
 
-    function init() {
-        const g = document.getElementById('topics');
-        const ts = [...new Set(data.map(d => d.t))];
-        g.innerHTML = "";
-        ts.forEach(t => {
-            const div = document.createElement('div');
-            div.className = 'card';
-            div.innerHTML = `<span class="icon">${icons[t]||'📚'}</span><span class="topic-name">${t}</span>`;
-            div.onclick = () => {
-                document.querySelectorAll('.card').forEach(c => c.classList.remove('active'));
-                div.classList.add('active'); sel = t;
-                document.getElementById('sBtn').disabled = false;
+    let currentScore = 0, selectedTopic = null, quizPool = [], currentIdx = 0;
+    const topicIcons = { "Metalltechnik": "⚙️", "Elektrotechnik": "⚡", "Fachrechnen": "📐", "Steuerungstechnik": "🕹️" };
+
+    function initDashboard() {
+        const grid = document.getElementById('topicsGrid');
+        const topics = [...new Set(allQuestions.map(q => q.topic))];
+        grid.innerHTML = "";
+        topics.forEach(t => {
+            const card = document.createElement('div');
+            card.className = 'topic-card';
+            card.innerHTML = `<span class="topic-icon">${topicIcons[t] || "📚"}</span><span class="topic-name">${t}</span>`;
+            card.onclick = () => {
+                document.querySelectorAll('.topic-card').forEach(c => c.classList.remove('active'));
+                card.classList.add('active'); selectedTopic = t;
+                document.getElementById('startBtn').disabled = false;
             };
-            g.appendChild(div);
+            grid.appendChild(card);
         });
     }
 
     function startQuiz() {
-        document.getElementById('dash').style.display = 'none';
-        document.getElementById('qView').style.display = 'block';
-        loadQ();
+        quizPool = allQuestions.filter(q => q.topic === selectedTopic);
+        currentIdx = 0;
+        document.getElementById('dashboardView').style.display = 'none';
+        document.getElementById('quizView').style.display = 'block';
+        loadQuestion();
     }
 
-    function loadQ() {
-        const q = data.find(d => d.t === sel);
-        document.getElementById('qText').innerText = q.q;
-        const oContainer = document.getElementById('options');
-        oContainer.innerHTML = "";
-        q.o.forEach((opt, i) => {
-            const b = document.createElement('button');
-            b.className = 'opt';
-            b.innerText = opt;
-            b.onclick = () => {
-                if(i === q.c) { alert("Richtig!"); location.reload(); }
-                else { alert("Leider falsch."); }
+    function loadQuestion() {
+        const q = quizPool[currentIdx];
+        document.getElementById('questionText').innerText = q.q;
+        const container = document.getElementById('optionsContainer');
+        container.innerHTML = "";
+        document.getElementById('feedbackBox').style.display = 'none';
+        document.getElementById('nextBtn').style.display = 'none';
+
+        q.options.forEach((opt, i) => {
+            const btn = document.createElement('button');
+            btn.className = 'option-btn';
+            btn.innerText = opt;
+            btn.onclick = () => {
+                document.querySelectorAll('.option-btn').forEach(b => b.disabled = true);
+                const fb = document.getElementById('feedbackBox');
+                fb.style.display = 'block';
+                if(i === q.correct) {
+                    btn.classList.add('correct');
+                    fb.innerHTML = `✅ Richtig! +${q.level * 10} Pkt.<br><small>${q.hint}</small>`;
+                    currentScore += (q.level * 10);
+                    document.getElementById('totalScore').innerText = currentScore + " Punkte";
+                } else {
+                    btn.classList.add('wrong');
+                    fb.innerHTML = `❌ Falsch.<br><small>${q.hint}</small>`;
+                }
+                if(currentIdx < quizPool.length - 1) document.getElementById('nextBtn').style.display = 'block';
+                else setTimeout(() => { alert("Glückwunsch! Thema beendet."); showDashboard(); }, 2500);
             };
-            oContainer.appendChild(b);
+            container.appendChild(btn);
         });
     }
 
-    init();
+    function nextQuestion() { currentIdx++; loadQuestion(); }
+    function showDashboard() { document.getElementById('dashView').style.display = 'block'; document.getElementById('quizView').style.display = 'none'; initDashboard(); }
+    initDashboard();
 </script>
 </body>
 </html>
