@@ -2,64 +2,69 @@
 <html lang="de">
 <head>
     <meta charset="UTF-8">
-    <title>IHK Akademie Schwaben Lern-App</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IHK Lern-App</title>
     <style>
         :root {
             --ihk-blau: #00457D;
             --ihk-rot: #E3001B;
-            --text-main: #1D1D1B; /* Dunkle Schrift für Sichtbarkeit */
+            --ihk-gelb: #FFCC00; /* Der gelbe Stuhl-Akzent */
         }
 
         body {
             margin: 0; padding: 0; font-family: 'Segoe UI', sans-serif;
-            background: url('hintergrund.jpg') center/cover no-repeat fixed #f0f2f5;
-            color: var(--text-main);
-            display: flex; height: 100vh;
+            /* Wir simulieren das Stuhl-Bild mit einem blauen Verlauf */
+            background: linear-gradient(135deg, #00457D 0%, #2980b9 100%);
+            background-attachment: fixed;
+            display: flex; height: 100vh; color: #333;
         }
 
-        .sidebar { width: 64px; background: var(--ihk-blau); display: flex; flex-direction: column; align-items: center; padding-top: 20px; }
+        /* Gelber Akzent-Punkt im Hintergrund (simuliert den gelben Stuhl) */
+        body::after {
+            content: ""; position: fixed; bottom: -100px; right: 10%;
+            width: 300px; height: 300px; background: var(--ihk-gelb);
+            filter: blur(80px); opacity: 0.4; z-index: -1;
+        }
+
+        .sidebar { width: 64px; background: rgba(0,0,0,0.2); display: flex; flex-direction: column; align-items: center; padding-top: 20px; }
         .main { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
-        .topbar { height: 48px; background: var(--ihk-blau); color: white; display: flex; align-items: center; padding: 0 20px; font-size: 14px; }
+        .topbar { height: 48px; background: var(--ihk-blau); color: white; display: flex; align-items: center; padding: 0 20px; font-weight: bold; }
 
         .app-content { flex: 1; padding: 30px; overflow-y: auto; }
 
-        /* Header weiß mit Schatten, damit er auf jedem Bild sichtbar ist */
         .header { 
-            background: white; padding: 15px 25px; border-radius: 12px; 
+            background: white; padding: 20px; border-radius: 12px; 
             display: flex; justify-content: space-between; align-items: center;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1); margin-bottom: 30px;
-            border-bottom: 3px solid var(--ihk-rot);
+            box-shadow: 0 8px 24px rgba(0,0,0,0.2); margin-bottom: 30px;
         }
 
-        .logo { height: 35px; }
+        .logo-text { color: var(--ihk-blau); font-weight: bold; font-size: 1.2rem; }
 
-        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 20px; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; }
 
-        /* Kacheln leicht grau, damit sie sich vom weißen Hintergrund abheben */
         .card {
-            background: rgba(255, 255, 255, 0.9);
+            background: rgba(255, 255, 255, 0.95);
             border-radius: 15px; padding: 30px; text-align: center;
-            cursor: pointer; border: 1px solid #ddd; transition: 0.3s;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            cursor: pointer; border: none; transition: 0.3s;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
         }
 
-        .card:hover { transform: translateY(-5px); box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
-        .card.active { border: 3px solid var(--ihk-rot); background: #fff5f5; }
+        .card:hover { transform: translateY(-5px); box-shadow: 0 8px 20px rgba(0,0,0,0.2); }
+        .card.active { border: 4px solid var(--ihk-gelb); background: white; }
 
         .icon { font-size: 3rem; margin-bottom: 10px; display: block; }
-        .topic-name { font-weight: bold; color: var(--ihk-blau); }
+        .topic-name { font-weight: bold; color: var(--ihk-blau); font-size: 1.1rem; }
 
         .btn-start {
             width: 100%; background: var(--ihk-rot); color: white; border: none;
-            padding: 20px; border-radius: 12px; font-size: 1.2rem; font-weight: bold;
-            cursor: pointer; margin-top: 30px; box-shadow: 0 4px 10px rgba(227,0,27,0.3);
+            padding: 20px; border-radius: 12px; font-size: 1.3rem; font-weight: bold;
+            cursor: pointer; margin-top: 30px; box-shadow: 0 4px 15px rgba(0,0,0,0.3);
         }
-        .btn-start:disabled { background: #ccc; box-shadow: none; cursor: not-allowed; }
+        .btn-start:disabled { background: #999; cursor: not-allowed; opacity: 0.5; }
 
-        /* Quiz */
-        .quiz { display: none; background: white; padding: 40px; border-radius: 15px; box-shadow: 0 5px 20px rgba(0,0,0,0.2); }
-        .opt { width: 100%; padding: 15px; margin: 10px 0; border: 1px solid #ddd; border-radius: 8px; text-align: left; cursor: pointer; font-size: 1.1rem; }
-        .opt:hover { background: #f9f9f9; border-color: var(--ihk-blau); }
+        .quiz { display: none; background: white; padding: 40px; border-radius: 15px; }
+        .opt { width: 100%; padding: 15px; margin: 10px 0; border: 2px solid #eee; border-radius: 8px; text-align: left; cursor: pointer; font-size: 1.1rem; background: white; }
+        .opt:hover { border-color: var(--ihk-blau); background: #f0f7ff; }
     </style>
 </head>
 <body>
@@ -67,23 +72,22 @@
     <div class="sidebar">🏠<br><br>💬<br><br>👥</div>
 
     <div class="main">
-        <div class="topbar">IHK Akademie Schwaben - Digitales Lernportal</div>
+        <div class="topbar">IHK AKADEMIE SCHWABEN - LERNPORTAL</div>
         
         <div class="app-content">
             <div class="header">
-                <img src="https://www.ihk-akademie-schwaben.de/fileadmin/templates/images/logo_ihk_akademie_schwaben.png" class="logo">
-                <span style="font-weight: bold; color: #f59e0b;">🏆 <span id="score">0 Punkte</span></span>
+                <div class="logo-text">IHK Akademie Schwaben</div>
+                <div style="color: #f59e0b; font-weight: bold;">🏆 Punkte: <span id="score">0</span></div>
             </div>
 
             <div id="dash">
-                <h1 style="color: var(--ihk-blau);">Gewerblich-Technische Lern-App</h1>
-                <p style="color: #666;">Wähle ein Thema aus:</p>
+                <h1 style="color: white; text-shadow: 2px 2px 4px rgba(0,0,0,0.3);">Gewerblich-Technische Lern-App</h1>
                 <div class="grid" id="topics"></div>
                 <button class="btn-start" id="sBtn" onclick="startQuiz()" disabled>QUIZ STARTEN</button>
             </div>
 
             <div id="qView" class="quiz">
-                <button onclick="showDash()" style="color:var(--ihk-blau); background:none; border:none; cursor:pointer; font-weight:bold;">⬅ Zurück</button>
+                <button onclick="location.reload()" style="background:none; border:none; color:var(--ihk-blau); cursor:pointer; font-weight:bold; margin-bottom:20px;">⬅ Zurück</button>
                 <h2 id="qText" style="color: var(--ihk-blau);">Frage...</h2>
                 <div id="options"></div>
             </div>
@@ -95,12 +99,11 @@
         { t: "Steuerungstechnik", q: "Was bedeutet SPS?", o: ["Sicherheits-System", "Speicherprogrammierbare Steuerung", "Serielle Steuerung"], c: 1 },
         { t: "Metalltechnik", q: "Welches Werkzeug nutzt man zum Anreißen?", o: ["Hammer", "Reißnadel", "Feile"], c: 1 },
         { t: "Elektrotechnik", q: "Einheit des Widerstands?", o: ["Volt", "Ampere", "Ohm"], c: 2 },
-        { t: "Techn. Kommunikation", q: "Was bedeutet die Abkürzung 'CAD'?", o: ["Computer Aided Design", "Control Analog Drive", "Central Auto Data"], c: 0 },
-        { t: "Fachrechnen", q: "Berechne 10% von 500.", o: ["5", "50", "500"], c: 1 }
+        { t: "Fachrechnen", q: "10% von 500?", o: ["5", "50", "500"], c: 1 }
     ];
 
     let sel = null;
-    const icons = { "Metalltechnik": "⚙️", "Steuerungstechnik": "🕹️", "Elektrotechnik": "⚡", "Techn. Kommunikation": "🖌️", "Fachrechnen": "📐" };
+    const icons = { "Metalltechnik": "⚙️", "Steuerungstechnik": "🕹️", "Elektrotechnik": "⚡", "Fachrechnen": "📐" };
 
     function init() {
         const g = document.getElementById('topics');
@@ -135,16 +138,11 @@
             b.className = 'opt';
             b.innerText = opt;
             b.onclick = () => {
-                if(i === q.c) { alert("Richtig!"); showDash(); }
+                if(i === q.c) { alert("Richtig!"); location.reload(); }
                 else { alert("Leider falsch."); }
             };
             oContainer.appendChild(b);
         });
-    }
-
-    function showDash() {
-        document.getElementById('dash').style.display = 'block';
-        document.getElementById('qView').style.display = 'none';
     }
 
     init();
