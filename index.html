@@ -18,7 +18,7 @@
         .screen { display: none; }
         .active-screen { display: block; }
 
-        .card { background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); width: 320px; margin: 50px auto; text-align: center; }
+        .card { background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); width: 320px; margin: 30px auto; text-align: center; }
         input { width: 100%; padding: 12px; margin: 10px 0; border: 1px solid #ccc; border-radius: 6px; box-sizing: border-box; }
 
         .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 15px; margin-top: 20px; }
@@ -42,7 +42,7 @@
 
     <div id="explanationOverlay">
         <div class="expl-card">
-            <h2 style="color:var(--ihk-rot); margin-top:0;">Lerneffekt!</h2>
+            <h2 style="color:var(--ihk-rot); margin-top:0;">💡 Erklärung</h2>
             <p id="explText" style="line-height:1.5; font-size:1.1rem; margin-bottom:20px;"></p>
             <button class="btn" onclick="closeExpl()">Verstanden & Weiter</button>
         </div>
@@ -93,17 +93,28 @@
 <script>
     const MASTER_PW = "ihk2024";
     const questions = [
-        // TECH MATHE (PDF Seite 1 & 2)
-        { t: "Technische Mathematik", q: "Runde 8,579 613 auf drei Stellen nach dem Komma.", o: ["8,579", "8,578", "8,580"], c: 2, hint: "Die vierte Stelle ist eine '6'. Ab 5 wird aufgerundet. Aus der 9 wird eine 10, die Stelle davor erhöht sich um 1." },
-        { t: "Technische Mathematik", q: "1,25m + 251cm + 15cm + 14,3mm. Welches Ergebnis ist nach Messregeln richtig?", o: ["3,9243 m", "3,92 m", "3,9 m"], c: 1, hint: "Das Ergebnis darf nicht genauer sein als der ungenaueste Wert (1,25m). Also zwei Nachkommastellen." },
-        { t: "Technische Mathematik", q: "Welche Einheit gehört zur Kraft?", o: ["Kilogramm (kg)", "Newton (N)", "Pascal (Pa)"], c: 1, hint: "Masse wird in kg gemessen, Kraft hingegen in Newton (N)." },
-        { t: "Technische Mathematik", q: "Stelle P = W / t nach t um.", o: ["t = W / P", "t = P / W", "t = W * P"], c: 0, hint: "t und P tauschen die Plätze: Zeit = Arbeit durch Leistung." },
-        { t: "Technische Mathematik", q: "Ein Quadrat hat eine Seitenlänge von 50mm. Wie groß ist die Fläche in cm²?", o: ["250 cm²", "25 cm²", "2,5 cm²"], c: 1, hint: "50mm = 5cm. Fläche = 5cm * 5cm = 25 cm²." },
+        // --- TECHNISCHE MATHEMATIK (VOLLSTÄNDIG AUS PDF) ---
+        { t: "Technische Mathematik", q: "Runde 8,579 613 auf drei Stellen nach dem Komma.", o: ["8,579", "8,578", "8,580", "8,581"], c: 2, hint: "Die 4. Stelle ist eine '6'. Ab 5 wird aufgerundet. Die 9 wird zur 10, wodurch die Stelle davor um 1 steigt -> 8,580." },
+        { t: "Technische Mathematik", q: "Runde 1,995 auf zwei Stellen nach dem Komma.", o: ["1,99", "2,00", "2,01"], c: 1, hint: "Die 3. Stelle ist eine '5'. Aufrunden! 1,99 wird zu 2,00." },
+        { t: "Technische Mathematik", q: "Berechne: 1,25m + 251cm + 15cm + 14,3mm (Regeln für Messwerte).", o: ["3,9243 m", "3,92 m", "3,9 m"], c: 1, hint: "Das Ergebnis darf nicht genauer sein als der ungenaueste Messwert. 1,25m hat 2 Dezimalstellen, also wird das Ergebnis auf 3,92m gerundet." },
+        { t: "Technische Mathematik", q: "Was ist das Ergebnis von 3,4447 gerundet auf zwei Stellen?", o: ["3,44", "3,45", "3,40"], c: 0, hint: "Die 3. Stelle ist eine '4'. Abrunden! Das Ergebnis bleibt 3,44." },
+        { t: "Technische Mathematik", q: "Umrechnung: Wie viel sind 0,085 Liter in mm³?", o: ["85 mm³", "850 mm³", "85.000 mm³"], c: 2, hint: "1 Liter = 1 dm³ = 1.000.000 mm³. Also: 0,085 * 1.000.000 = 85.000 mm³." },
+        { t: "Technische Mathematik", q: "Stelle die Formel v_c = (d * π * n) / 1000 nach n um.", o: ["n = (v_c * 1000) / (d * π)", "n = v_c / (d * π * 1000)", "n = (d * π) / (v_c * 1000)"], c: 0, hint: "Die 1000 kommt mit 'mal' nach oben, d und π mit 'geteilt' nach unten." },
+        { t: "Technische Mathematik", q: "Ein Blech wiegt 12,5 kg. Wie viel Newton (N) entspricht die Gewichtskraft (g=10m/s²)?", o: ["1,25 N", "12,5 N", "125 N"], c: 2, hint: "F = m * g. Also 12,5 kg * 10 m/s² = 125 N." },
+        { t: "Technische Mathematik", q: "Wie viele cm² sind 0,5 m²?", o: ["50 cm²", "500 cm²", "5.000 cm²"], c: 2, hint: "Umrechnungszahl bei Flächen ist 100. m² -> dm² (x100) -> cm² (x100). Also 0,5 * 10.000 = 5.000 cm²." },
         
-        // ANDERE THEMEN
-        { t: "Metalltechnik", q: "Wofür steht HSS?", o: ["High Speed Steel", "Hard Silver Steel", "Haupt-Stahl-Schnitt"], c: 0, hint: "Hochgeschwindigkeitsschnittstahl für Bohrer und Fräser." },
-        { t: "Steuerungstechnik", q: "Welches Bauteil ist ein Aktor?", o: ["Lichtschranke", "Pneumatikzylinder", "Endschalter"], c: 1, hint: "Aktoren führen Bewegungen aus (z.B. Zylinder), Sensoren nehmen Signale auf." },
-        { t: "Elektrotechnik", q: "Farbe des Schutzleiters (PE)?", o: ["Blau", "Grün-Gelb", "Schwarz"], c: 1, hint: "Grün-Gelb ist weltweit der Standard für den Schutzleiter." }
+        // --- METALLTECHNIK ---
+        { t: "Metalltechnik", q: "Welcher Winkel am Meißel bestimmt die Keilwirkung?", o: ["Freiwinkel", "Keilwinkel", "Spanwinkel"], c: 1, hint: "Der Keilwinkel (beta) bestimmt, wie leicht der Meißel in den Werkstoff eindringt und wie stabil die Schneide ist." },
+        { t: "Metalltechnik", q: "Wofür steht HSS?", o: ["High Speed Steel", "Hard Silver Steel", "Haupt-Stahl-Schnitt"], c: 0, hint: "HSS ist Hochgeschwindigkeitsstahl, ideal für Bohrer." },
+        
+        // --- STEUERUNGSTECHNIK ---
+        { t: "Steuerungstechnik", q: "Was macht ein 3/2-Wegeventil?", o: ["Steuert 3 Zylinder", "Hat 3 Anschlüsse und 2 Schaltstellungen", "Hat 2 Anschlüsse und 3 Schaltstellungen"], c: 1, hint: "Die erste Zahl gibt die Anschlüsse an, die zweite die Schaltstellungen." },
+        
+        // --- ELEKTROTECHNIK ---
+        { t: "Elektrotechnik", q: "Wie verhält sich der Strom in einer Reihenschaltung?", o: ["Er teilt sich auf", "Er ist überall gleich groß", "Er wird am Ende kleiner"], c: 1, hint: "In einer unverzweigten Schaltung muss der gesamte Strom durch jeden Widerstand fließen." },
+        
+        // --- PRÜFUNGSVORBEREITUNG ---
+        { t: "Prüfungsvorbereitung", q: "Welcher Taschenrechner ist in der IHK-Prüfung erlaubt?", o: ["Smartphone", "Programmierbarer Rechner", "Nicht-programmierbarer Rechner"], c: 2, hint: "Nur einfache wissenschaftliche Rechner ohne Speicher für Texte/Formeln sind zulässig." }
     ];
 
     let user = "", isAdmin = false, currentTopic = "", currentPool = [], qIdx = 0, score = 0;
@@ -111,7 +122,7 @@
     function login() {
         const nameInput = document.getElementById('uName').value;
         const pwInput = document.getElementById('adminPw').value;
-        if(!nameInput) return alert("Name?");
+        if(!nameInput) return alert("Bitte Namen eingeben!");
         user = nameInput;
         if(pwInput === MASTER_PW) { isAdmin = true; user = "⭐ Admin (" + user + ")"; }
         document.getElementById('userDisplay').innerText = user;
@@ -166,7 +177,7 @@
                     alert("Richtig! 🌟");
                     nextQuestion();
                 } else {
-                    document.getElementById('explText').innerText = q.hint;
+                    document.getElementById('explText').innerText = q.hint || "Keine weitere Erklärung verfügbar.";
                     document.getElementById('explanationOverlay').style.display = 'flex';
                 }
             };
@@ -184,7 +195,7 @@
         if(qIdx < currentPool.length) {
             loadQuestion();
         } else {
-            alert("Fertig! Deine Punkte: " + score);
+            alert("Thema abgeschlossen! Punkte: " + score);
             saveScore();
             showDashboard();
         }
@@ -211,7 +222,7 @@
     }
 
     function deleteEntry(name) {
-        if(!confirm("Löschen?")) return;
+        if(!confirm("Eintrag wirklich löschen?")) return;
         let lb = JSON.parse(localStorage.getItem('ihk_app_lb') || '[]');
         lb = lb.filter(u => u.n !== name);
         localStorage.setItem('ihk_app_lb', JSON.stringify(lb));
