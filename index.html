@@ -8,146 +8,249 @@
         :root {
             --ihk-blau: #00457D;
             --ihk-rot: #E3001B;
-            --text-hell: #FFFFFF;
+            --bg: #f4f7f9;
         }
 
         body {
             margin: 0; padding: 0; display: flex; height: 100vh;
             font-family: 'Segoe UI', Arial, sans-serif;
-            color: var(--text-hell);
-            
-            /* HIER WIRD DEIN HOCHGELADENES BILD GEZOGEN */
-            background-image: url('Teams_Hintergrund.jpg'); 
-            
-            background-size: cover;
-            background-position: center;
-            background-repeat: no-repeat;
-            background-attachment: fixed;
-            background-color: var(--ihk-blau); /* Fallback */
+            background-color: var(--bg); color: #333;
         }
 
-        /* Glaseffekt für die Boxen */
-        .glass {
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            border-radius: 12px;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        /* Teams-Style Sidebar */
+        .sidebar {
+            width: 64px; background-color: var(--ihk-blau);
+            display: flex; flex-direction: column; align-items: center; padding-top: 20px;
+        }
+        .nav-icon { 
+            font-size: 24px; color: white; margin-bottom: 30px; 
+            cursor: pointer; opacity: 0.7; transition: 0.2s; 
+        }
+        .nav-icon:hover { opacity: 1; transform: scale(1.1); }
+
+        .main { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+        .topbar { 
+            height: 48px; background: var(--ihk-blau); color: white; 
+            display: flex; align-items: center; padding: 0 20px; font-weight: 600; 
         }
 
-        .teams-sidebar { width: 64px; background: rgba(0, 69, 125, 0.8); display: flex; flex-direction: column; align-items: center; padding-top: 20px; }
-        .main-container { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
-        .teams-topbar { height: 48px; background: rgba(0, 69, 125, 0.7); display: flex; align-items: center; padding: 0 20px; font-size: 14px; font-weight: 600; }
+        .content { flex: 1; padding: 30px; overflow-y: auto; position: relative; }
 
-        .app-content { flex: 1; padding: 30px; overflow-y: auto; }
-        
-        .app-header { 
-            display: flex; justify-content: space-between; align-items: center; 
-            padding: 15px 25px; margin-bottom: 25px;
+        /* Login Screen */
+        #loginScreen {
+            position: absolute; inset: 0; background: var(--bg); z-index: 100;
+            display: flex; justify-content: center; align-items: center;
         }
-        
-        /* Das Logo oben links (IHK Logo) */
-        .ihk-logo { height: 45px; filter: brightness(0) invert(1); }
-
-        .topics-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; }
-
-        .topic-card { 
-            padding: 30px; text-align: center; cursor: pointer; transition: 0.3s;
-            display: flex; flex-direction: column; align-items: center;
+        .login-card {
+            background: white; padding: 40px; border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1); text-align: center; width: 320px;
         }
-        .topic-card:hover { background: rgba(255, 255, 255, 0.2); transform: translateY(-5px); }
-        .topic-card.active { border: 2px solid var(--ihk-rot); background: rgba(255, 255, 255, 0.2); }
-
-        .topic-icon { font-size: 3rem; margin-bottom: 10px; }
-        .topic-name { font-weight: bold; text-shadow: 1px 1px 4px rgba(0,0,0,0.6); }
-
-        .start-btn { 
-            width: 100%; background: var(--ihk-rot); color: white; border: none; 
-            padding: 20px; border-radius: 12px; font-size: 1.2rem; font-weight: bold; 
-            cursor: pointer; margin-top: 25px; box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+        input { 
+            width: 100%; padding: 12px; margin: 10px 0; border: 2px solid #ddd; 
+            border-radius: 6px; box-sizing: border-box; 
         }
-        .start-btn:disabled { background: rgba(255,255,255,0.2); color: rgba(255,255,255,0.5); cursor: not-allowed; }
 
-        .quiz-view { display: none; padding: 40px; }
-        .option-btn { 
-            width: 100%; padding: 15px; margin: 10px 0; background: rgba(255,255,255,0.1); 
-            border: 1px solid rgba(255,255,255,0.3); border-radius: 8px; color: white; 
-            text-align: left; cursor: pointer; font-size: 1.1rem; 
+        /* Header & Stats */
+        .app-header {
+            background: white; padding: 15px 25px; border-radius: 8px;
+            display: flex; justify-content: space-between; align-items: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05); margin-bottom: 25px;
         }
-        .option-btn:hover { background: rgba(255,255,255,0.2); }
+
+        /* Grid & Topics */
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; }
+        .topic-box {
+            background: white; padding: 30px; border-radius: 12px; text-align: center;
+            cursor: pointer; border: 2px solid transparent; box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            transition: 0.2s;
+        }
+        .topic-box:hover { transform: translateY(-3px); box-shadow: 0 8px 15px rgba(0,0,0,0.1); }
+        .topic-box.active { border-color: var(--ihk-rot); background: #fffafa; }
+        .topic-box.exam { border: 2px dashed var(--ihk-rot); background: #fffdf0; }
+
+        .btn {
+            background: var(--ihk-rot); color: white; border: none; padding: 15px;
+            border-radius: 8px; font-weight: bold; cursor: pointer; width: 100%; font-size: 1rem;
+        }
+        .btn:disabled { background: #ccc; cursor: not-allowed; }
+
+        /* Views */
+        .view { display: none; background: white; padding: 35px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
+        .opt-btn {
+            width: 100%; padding: 15px; margin: 8px 0; border: 1px solid #ddd;
+            border-radius: 8px; background: white; text-align: left; cursor: pointer; font-size: 1rem;
+        }
+        .opt-btn:hover { background: #f0f7ff; border-color: var(--ihk-blau); }
+
+        /* Leaderboard */
+        .lb-entry { display: flex; justify-content: space-between; align-items: center; padding: 12px; border-bottom: 1px solid #eee; }
+        .del-btn { background: #ff4444; color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer; font-size: 0.7rem; }
     </style>
 </head>
 <body>
 
-    <div class="teams-sidebar">🏠<br><br>💬<br><br>👥</div>
+    <div class="sidebar">
+        <div class="nav-icon" onclick="goHome()">🏠</div>
+        <div class="nav-icon" onclick="showLeaderboard()">🏆</div>
+    </div>
 
-    <div class="main-container">
-        <div class="teams-topbar">IHK Akademie Schwaben - Lernportal</div>
-        <div class="app-content">
-            
-            <div class="app-header glass">
-                <img src="https://www.ihk-akademie-schwaben.de/fileadmin/templates/images/logo_ihk_akademie_schwaben.png" class="ihk-logo">
-                <div style="font-weight: bold; color: #FFCC00;">🏆 <span id="points">0 Punkte</span></div>
+    <div class="main">
+        <div class="topbar">IHK Akademie Schwaben - Lern-App</div>
+        
+        <div class="content">
+            <div id="loginScreen">
+                <div class="login-card">
+                    <h2 style="color:var(--ihk-blau); margin-top:0;">Anmeldung</h2>
+                    <input type="text" id="uName" placeholder="Dein Name...">
+                    <input type="password" id="adminPw" placeholder="Admin-Passwort (optional)">
+                    <button class="btn" onclick="login()" style="margin-top:10px;">Loslegen</button>
+                </div>
             </div>
 
-            <div id="dash">
-                <h1 style="text-shadow: 2px 2px 10px rgba(0,0,0,0.5);">Gewerblich-Technische Lern-App</h1>
-                <div class="topics-grid" id="grid"></div>
-                <button class="start-btn" id="sBtn" onclick="start()" disabled>QUIZ STARTEN</button>
+            <div id="uiHeader" class="app-header" style="display:none;">
+                <div id="userNameDisplay" style="font-weight:bold;">👤 Gast</div>
+                <div style="color:#f59e0b; font-weight:bold;">⭐ <span id="pointsDisplay">0</span> Pkt.</div>
             </div>
 
-            <div id="quiz" class="quiz-view glass">
-                <button onclick="location.reload()" style="background:none; border:none; color:white; cursor:pointer; margin-bottom:20px;">⬅ Zurück</button>
-                <h2 id="qText">Frage...</h2>
-                <div id="opts"></div>
+            <div id="dashboard" style="display:none;">
+                <h1 style="color:var(--ihk-blau); margin-top:0;">Themenbereiche</h1>
+                <div class="grid" id="topicGrid"></div>
+                <button class="btn" id="startBtn" onclick="initQuiz()" disabled style="margin-top:25px;">QUIZ STARTEN</button>
             </div>
 
+            <div id="quizView" class="view">
+                <h2 id="qText" style="margin-top:0; color:var(--ihk-blau);">Frage</h2>
+                <div id="optContainer"></div>
+            </div>
+
+            <div id="leaderboardView" class="view">
+                <h2 style="color:var(--ihk-blau); margin-top:0;">🏆 Bestenliste</h2>
+                <div id="lList"></div>
+                <button class="btn" onclick="goHome()" style="margin-top:20px; background:var(--ihk-blau);">Zurück</button>
+            </div>
         </div>
     </div>
 
 <script>
+    const MASTER_PW = "ihk2024"; // Dein Admin-Passwort
+
     const questions = [
-        { t: "Steuerungstechnik", q: "Was bedeutet SPS?", o: ["Sicherheits-Prüf-System", "Speicherprogrammierbare Steuerung", "Sensor-System"], c: 1 },
+        { t: "Steuerungstechnik", q: "Was bedeutet SPS?", o: ["System-Plan", "Speicherprogrammierbare Steuerung", "Sensor-Steuerung"], c: 1 },
         { t: "Metalltechnik", q: "Werkzeug zum Anreißen?", o: ["Hammer", "Reißnadel", "Feile"], c: 1 },
-        { t: "Elektrotechnik", q: "Einheit des Widerstands?", o: ["Volt", "Ampere", "Ohm"], c: 2 }
+        { t: "Elektrotechnik", q: "Einheit des Widerstands?", o: ["Volt", "Ampere", "Ohm"], c: 2 },
+        { t: "Prüfungsvorbereitung", q: "Welches Dokument ist zur Prüfung zwingend mitzubringen?", o: ["Berichtsheft", "Lichtbildausweis", "Beides"], c: 2 }
     ];
 
-    let selected = null;
-    const icons = { "Metalltechnik": "⚙️", "Steuerungstechnik": "🕹️", "Elektrotechnik": "⚡" };
+    let user = "", score = 0, selectedTopic = null, pool = [], currentQIdx = 0, isAdmin = false;
 
-    function init() {
-        const g = document.getElementById('grid');
-        const ts = [...new Set(questions.map(q => q.topic))];
+    function login() {
+        const name = document.getElementById('uName').value;
+        const pw = document.getElementById('adminPw').value;
+        if(!name) return alert("Bitte Namen eingeben!");
+        
+        user = name;
+        if(pw === MASTER_PW) {
+            isAdmin = true;
+            user = "⭐ Admin (" + name + ")";
+        }
+
+        document.getElementById('userNameDisplay').innerText = "👤 " + user;
+        document.getElementById('loginScreen').style.display = 'none';
+        document.getElementById('uiHeader').style.display = 'flex';
+        document.getElementById('dashboard').style.display = 'block';
+        renderTopics();
+    }
+
+    function renderTopics() {
+        const g = document.getElementById('topicGrid');
+        const ts = [...new Set(questions.map(q => q.t))];
+        g.innerHTML = "";
         ts.forEach(t => {
             const d = document.createElement('div');
-            d.className = 'topic-card glass';
-            d.innerHTML = `<span class="topic-icon">${icons[t]||'📚'}</span><span class="topic-name">${t}</span>`;
+            d.className = 'topic-box' + (t === "Prüfungsvorbereitung" ? " exam" : "");
+            d.innerHTML = `<b>${t}</b>`;
             d.onclick = () => {
-                document.querySelectorAll('.topic-card').forEach(c => c.classList.remove('active'));
-                d.classList.add('active'); selected = t;
-                document.getElementById('sBtn').disabled = false;
+                document.querySelectorAll('.topic-box').forEach(b => b.classList.remove('active'));
+                d.classList.add('active'); selectedTopic = t;
+                document.getElementById('startBtn').disabled = false;
             };
             g.appendChild(d);
         });
     }
 
-    function start() {
-        document.getElementById('dash').style.display = 'none';
-        document.getElementById('quiz').style.display = 'block';
-        const q = questions.find(q => q.topic === selected);
+    function initQuiz() {
+        pool = questions.filter(q => q.t === selectedTopic);
+        pool.sort(() => Math.random() - 0.5); // ZUFALL
+        currentQIdx = 0;
+        showView('quizView');
+        loadQuestion();
+    }
+
+    function loadQuestion() {
+        const q = pool[currentQIdx];
         document.getElementById('qText').innerText = q.q;
-        const oContainer = document.getElementById('opts');
-        oContainer.innerHTML = "";
+        const container = document.getElementById('optContainer');
+        container.innerHTML = "";
         q.o.forEach((opt, i) => {
             const b = document.createElement('button');
-            b.className = 'option-btn';
+            b.className = 'opt-btn';
             b.innerText = opt;
-            b.onclick = () => { if(i === q.c) { alert("Richtig!"); location.reload(); } else { alert("Falsch!"); } };
-            oContainer.appendChild(b);
+            b.onclick = () => {
+                if(i === q.c) { score += 10; document.getElementById('pointsDisplay').innerText = score; alert("Richtig!"); saveScore(); }
+                else { alert("Falsch!"); }
+                
+                currentQIdx++;
+                if(currentQIdx < pool.length) loadQuestion();
+                else { alert("Thema abgeschlossen!"); goHome(); }
+            };
+            container.appendChild(b);
         });
     }
-    init();
+
+    function saveScore() {
+        let lb = JSON.parse(localStorage.getItem('ihk_app_lb') || '[]');
+        const i = lb.findIndex(item => item.n === user);
+        if(i > -1) { if(score > lb[i].s) lb[i].s = score; }
+        else { lb.push({n: user, s: score}); }
+        lb.sort((a,b) => b.s - a.s);
+        localStorage.setItem('ihk_app_lb', JSON.stringify(lb));
+    }
+
+    function showLeaderboard() {
+        if(!user) return;
+        showView('leaderboardView');
+        const lb = JSON.parse(localStorage.getItem('ihk_app_lb') || '[]');
+        document.getElementById('lList').innerHTML = lb.map(u => `
+            <div class="lb-entry">
+                <span>${u.n}</span>
+                <span>
+                    <b>${u.s} Pkt.</b>
+                    ${isAdmin ? `<button class="del-btn" onclick="deleteEntry('${u.n}')">Löschen</button>` : ''}
+                </span>
+            </div>
+        `).join('');
+    }
+
+    function deleteEntry(name) {
+        if(!confirm(name + " löschen?")) return;
+        let lb = JSON.parse(localStorage.getItem('ihk_app_lb') || '[]');
+        lb = lb.filter(u => u.n !== name);
+        localStorage.setItem('ihk_app_lb', JSON.stringify(lb));
+        showLeaderboard();
+    }
+
+    function goHome() {
+        if(!user) return;
+        showView('dashboard');
+        selectedTopic = null;
+        document.getElementById('startBtn').disabled = true;
+        renderTopics();
+    }
+
+    function showView(id) {
+        ['dashboard', 'quizView', 'leaderboardView'].forEach(v => document.getElementById(v).style.display = 'none');
+        document.getElementById(id).style.display = 'block';
+    }
 </script>
 </body>
 </html>
