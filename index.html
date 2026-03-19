@@ -7,56 +7,56 @@
     <style>
         :root { --ihk-blau: #00457D; --ihk-rot: #E3001B; --bg: #f4f7f9; }
         body { margin: 0; padding: 0; display: flex; height: 100vh; font-family: 'Segoe UI', sans-serif; background: var(--bg); color: #333; }
+        
         .sidebar { width: 64px; background: var(--ihk-blau); display: flex; flex-direction: column; align-items: center; padding-top: 20px; }
-        .nav-icon { font-size: 24px; color: white; margin-bottom: 30px; cursor: pointer; opacity: 0.7; }
+        .nav-icon { font-size: 24px; color: white; margin-bottom: 30px; cursor: pointer; }
+        
         .main { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
         .topbar { height: 48px; background: var(--ihk-blau); color: white; display: flex; align-items: center; padding: 0 20px; font-weight: 600; }
         .content { flex: 1; padding: 30px; overflow-y: auto; position: relative; }
         
-        /* Login & Views */
         #loginScreen { position: absolute; inset: 0; background: var(--bg); z-index: 100; display: flex; justify-content: center; align-items: center; }
         .card { background: white; padding: 40px; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); text-align: center; width: 320px; }
-        input { width: 100%; padding: 12px; margin: 10px 0; border: 2px solid #ddd; border-radius: 6px; }
         
         .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; }
-        .topic-box { background: white; padding: 30px; border-radius: 12px; text-align: center; cursor: pointer; border: 2px solid transparent; box-shadow: 0 4px 6px rgba(0,0,0,0.05); display: flex; flex-direction: column; align-items: center; }
+        .topic-box { background: white; padding: 30px; border-radius: 12px; text-align: center; cursor: pointer; border: 2px solid transparent; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
         .topic-box.active { border-color: var(--ihk-rot); background: #fffafa; }
         
         .btn { background: var(--ihk-rot); color: white; border: none; padding: 15px; border-radius: 8px; font-weight: bold; cursor: pointer; width: 100%; }
         .view { display: none; background: white; padding: 35px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
-        .opt-btn { width: 100%; padding: 15px; margin: 8px 0; border: 1px solid #ddd; border-radius: 8px; background: white; text-align: left; cursor: pointer; }
-        .opt-btn:hover { background: #f0f7ff; }
+        .opt-btn { width: 100%; padding: 15px; margin: 8px 0; border: 1px solid #ddd; border-radius: 8px; background: white; text-align: left; cursor: pointer; font-size: 1rem; }
 
-        /* Erklärungs-Overlay */
+        /* ERKLÄRUNGS-OVERLAY (Das Pop-up) */
         #explanationOverlay {
-            display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.8);
-            z-index: 1000; justify-content: center; align-items: center; padding: 20px;
+            display: none; /* Standardmäßig unsichtbar */
+            position: fixed; inset: 0; background: rgba(0,0,0,0.85);
+            z-index: 2000; justify-content: center; align-items: center; padding: 20px;
         }
-        .expl-card { background: white; padding: 30px; border-radius: 12px; max-width: 500px; text-align: center; }
+        .expl-card { background: white; padding: 30px; border-radius: 12px; max-width: 500px; text-align: center; box-shadow: 0 20px 40px rgba(0,0,0,0.4); }
     </style>
 </head>
 <body>
 
     <div id="explanationOverlay">
         <div class="expl-card">
-            <h2 id="explTitle" style="color:var(--ihk-rot)">Leider falsch!</h2>
-            <p id="explText" style="line-height:1.6; font-size:1.1rem;"></p>
+            <h2 style="color:var(--ihk-rot); margin-top:0;">Nicht ganz richtig...</h2>
+            <p id="explText" style="line-height:1.6; font-size:1.1rem; margin: 20px 0;"></p>
             <button class="btn" onclick="closeExpl()">Verstanden & Weiter</button>
         </div>
     </div>
 
     <div class="sidebar">
         <div class="nav-icon" onclick="goHome()">🏠</div>
-        <div class="nav-icon" onclick="showLeaderboard()">🏆</div>
     </div>
 
     <div class="main">
-        <div class="topbar">IHK Akademie - Technisches Quiz</div>
+        <div class="topbar">IHK Akademie - Technisches Lernen</div>
         <div class="content">
+            
             <div id="loginScreen">
                 <div class="card">
-                    <h2>Anmeldung</h2>
-                    <input type="text" id="uName" placeholder="Dein Name...">
+                    <h2 style="color:var(--ihk-blau)">Anmeldung</h2>
+                    <input type="text" id="uName" placeholder="Dein Name..." style="width:100%; padding:10px; margin-bottom:20px; border:1px solid #ccc; border-radius:4px;">
                     <button class="btn" onclick="login()">Starten</button>
                 </div>
             </div>
@@ -68,55 +68,36 @@
             </div>
 
             <div id="quizView" class="view">
-                <h2 id="qText" style="color:var(--ihk-blau)"></h2>
+                <h2 id="qText" style="color:var(--ihk-blau); margin-top:0;"></h2>
                 <div id="optContainer"></div>
             </div>
 
-            <div id="leaderboardView" class="view">
-                <h2>🏆 Bestenliste</h2>
-                <div id="lList"></div>
-            </div>
         </div>
     </div>
 
 <script>
     const questions = [
-        // --- TECHNISCHE MATHEMATIK (Aus deiner PDF) ---
         { 
             t: "Technische Mathematik", 
             q: "Runde die Zahl 8,579 613 auf drei Ziffern hinter dem Komma.", 
             o: ["8,579", "8,578", "8,580"], 
             c: 2,
-            hint: "Da die vierte Ziffer eine '6' ist (größer als 5), muss aufgerundet werden. Aus der 9 wird eine 10, was die Stelle davor erhöht: 8,580."
+            hint: "Die vierte Ziffer nach dem Komma ist eine '6'. Ab der Ziffer 5 wird aufgerundet. Aus der '9' am Ende wird also eine '10', was die Stelle davor um 1 erhöht. Das Ergebnis ist 8,580."
         },
         { 
             t: "Technische Mathematik", 
-            q: "Berechne die Summe der Längen: 1,25m; 251cm; 15cm; 14,3mm. Welches Ergebnis ist nach den Regeln für Messwerte richtig?", 
+            q: "Was ist das richtige Ergebnis für: 1,25m + 251cm + 15cm + 14,3mm (nach Rechenregeln für Messwerte)?", 
             o: ["3,9243 m", "3,92 m", "3,9 m"], 
             c: 1,
-            hint: "Das Ergebnis darf nicht genauer sein als der ungenaueste Messwert. 1,25m hat zwei Nachkommastellen, daher muss das Ergebnis auch auf zwei Stellen gerundet werden."
-        },
-        { 
-            t: "Technische Mathematik", 
-            q: "Welche Rundung auf zwei Ziffern hinter dem Komma ist RICHTIG?", 
-            o: ["1,995 -> 1,90", "7,034 -> 7,04", "3,4447 -> 3,44"], 
-            c: 2,
-            hint: "Bei 3,4447 ist die dritte Stelle eine '4'. Daher wird abgerundet. Das Ergebnis bleibt 3,44."
-        },
-        { 
-            t: "Technische Mathematik", 
-            q: "Die Formel für die Leistung lautet P = W / t. Wie lautet die Formel umgestellt nach der Zeit t?", 
-            o: ["t = P * W", "t = W / P", "t = P / W"], 
-            c: 1,
-            hint: "Um t zu isolieren, tauschen P und t die Plätze (Multiplikation mit t, Division durch P). Somit gilt: Zeit = Arbeit / Leistung."
+            hint: "Regel: Das Ergebnis darf nicht genauer sein als das ungenaueste Maß. 1,25m hat zwei Stellen nach dem Komma. Deshalb runden wir das Gesamtergebnis auch auf zwei Stellen: 3,92m."
         }
     ];
 
-    let user = "", score = 0, selectedTopic = null, pool = [], currentQIdx = 0;
+    let user = "", selectedTopic = null, pool = [], currentQIdx = 0;
 
     function login() {
         user = document.getElementById('uName').value;
-        if(!user) return alert("Name?");
+        if(!user) return alert("Bitte Name eingeben!");
         document.getElementById('loginScreen').style.display = 'none';
         document.getElementById('dashboard').style.display = 'block';
         renderTopics();
@@ -124,12 +105,12 @@
 
     function renderTopics() {
         const g = document.getElementById('topicGrid');
-        const ts = ["Technische Mathematik", "Metalltechnik"];
+        const ts = ["Technische Mathematik"];
         g.innerHTML = "";
         ts.forEach(t => {
             const d = document.createElement('div');
             d.className = 'topic-box';
-            d.innerHTML = `<span style="font-size:2rem">🧮</span><b>${t}</b>`;
+            d.innerHTML = `<span style="font-size:2rem">🧮</span><br><b>${t}</b>`;
             d.onclick = () => {
                 document.querySelectorAll('.topic-box').forEach(b => b.classList.remove('active'));
                 d.classList.add('active'); selectedTopic = t;
@@ -163,13 +144,14 @@
     function checkAnswer(idx) {
         const q = pool[currentQIdx];
         if(idx === q.c) {
-            score += 10;
             alert("Richtig! 🌟");
             nextQuestion();
         } else {
-            // Zeige das Erklärungs-Overlay
+            // ERKLÄRUNG ANZEIGEN
             document.getElementById('explText').innerText = q.hint;
             document.getElementById('explanationOverlay').style.display = 'flex';
+            // Wichtig: Wir rufen nextQuestion() hier NICHT auf, 
+            // sondern erst wenn der Button im Pop-up geklickt wird!
         }
     }
 
@@ -180,11 +162,15 @@
 
     function nextQuestion() {
         currentQIdx++;
-        if(currentQIdx < pool.length) loadQuestion();
-        else { alert("Thema abgeschlossen!"); goHome(); }
+        if(currentQIdx < pool.length) {
+            loadQuestion();
+        } else {
+            alert("Thema abgeschlossen!");
+            goHome();
+        }
     }
 
-    function goHome() { 
+    function goHome() {
         document.getElementById('quizView').style.display = 'none';
         document.getElementById('dashboard').style.display = 'block';
     }
