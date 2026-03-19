@@ -3,300 +3,102 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>IHK Akademie Schwaben - Technik-Lern-App</title>
+    <title>IHK Akademie Schwaben - Lern-App</title>
     <style>
-        :root {
-            /* --- IHK AKADEMIE SCHWABEN BRANDING FARBEN --- */
-            --ihk-blau: #00457D;      /* Das offizielle IHK Blau */
-            --ihk-rot: #E3001B;       /* Das IHK Rot für Akzente */
-            --ihk-grau-bg: #F0F2F5;   /* Heller Hintergrund */
-            --ihk-weiss: #FFFFFF;
-            --ihk-text: #1D1D1B;      /* Fast Schwarz für Text */
-            --ihk-text-sec: #575756;  /* Dunkelgrau für Sekundärtext */
-            
-            /* Funktionsfarben (Bleiben für Usability gleich) */
-            --success: #107c10;
-            --error: #a4262c;
-        }
-
-        body {
-            font-family: 'Segoe UI', Arial, sans-serif;
-            background-color: var(--ihk-grau-bg);
-            margin: 0; padding: 0; display: flex; height: 100vh; color: var(--ihk-text);
-        }
-
-        /* Teams Layout Simulation (Jetzt im IHK-Blau) */
-        .teams-sidebar { width: 64px; background-color: var(--ihk-blau); display: flex; flex-direction: column; align-items: center; padding-top: 20px; }
-        .sidebar-icon { font-size: 20px; margin-bottom: 25px; opacity: 0.7; color: white; cursor: pointer; }
-        .sidebar-icon:hover { opacity: 1; }
-        
-        .main-container { flex: 1; display: flex; flex-direction: column; }
-        .teams-topbar { height: 48px; background-color: var(--ihk-blau); display: flex; align-items: center; padding: 0 20px; color: white; border-bottom: 1px solid rgba(255,255,255,0.2); }
-        .topbar-title { font-weight: 600; font-size: 14px; }
-
-        /* App Content */
-        .app-content { flex: 1; padding: 30px; overflow-y: auto; }
-        
-        /* Gebrandeter Header mit IHK-Logo */
-        .app-header { 
-            display: flex; 
-            justify-content: space-between; 
-            align-items: center; 
-            background: var(--ihk-weiss); 
-            padding: 15px 25px; 
-            border-radius: 8px; 
-            box-shadow: 0 1px 3px rgba(0,0,0,0.05); 
-            margin-bottom: 25px; 
-            border-bottom: 3px solid var(--ihk-rot); /* Roter Akzent-Strich */
-        }
-        
-        /* IHK Logo Einbindung */
-        .ihk-logo {
-            height: 40px; /* Höhe anpassen, falls nötig */
-            width: auto;
-            display: block;
-        }
-        
-        .score-badge { color: #f59e0b; font-weight: bold; font-size: 1.2rem; display: flex; align-items: center; gap: 8px; }
-
-        /* Dashboard Grid */
-        .topics-grid { 
-            display: grid; 
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); 
-            gap: 25px; 
-            margin-top: 20px; 
-            margin-bottom: 30px;
-        }
-
-        .topic-card { 
-            background: var(--ihk-weiss); 
-            border-radius: 12px; 
-            padding: 30px 20px; 
-            text-align: center; 
-            box-shadow: 0 2px 6px rgba(0,0,0,0.08); 
-            cursor: pointer; 
-            transition: 0.2s; 
-            border: 2px solid transparent;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-
-        .topic-card:hover { transform: translateY(-3px); box-shadow: 0 4px 12px rgba(0,0,0,0.12); border-color: #d0d0d0; }
-        
-        /* Aktive Kachel jetzt im IHK-Blau */
-        .topic-card.active { border-color: var(--ihk-blau); background-color: #e6f0f8; }
-        
-        .topic-icon { font-size: 3rem; display: block; margin-bottom: 15px; }
-        .topic-name { font-weight: 600; font-size: 1.1rem; color: var(--ihk-text); }
-        
-        /* Start-Button im IHK-Rot */
-        .start-quiz-btn { 
-            grid-column: 1 / -1; 
-            background-color: var(--ihk-rot); 
-            color: white; border: none; padding: 20px; 
-            border-radius: 12px; font-size: 1.3rem; font-weight: bold; cursor: pointer; 
-            transition: 0.2s;
-        }
-        .start-quiz-btn:hover { background-color: #c40018; }
-        .start-quiz-btn:disabled { background-color: #ccc; cursor: not-allowed; }
-
-        /* Quiz View */
-        .quiz-view { display: none; background: var(--ihk-weiss); border-radius: 12px; padding: 40px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
-        
-        /* Antwort-Button Styling */
-        .option-btn { width: 100%; padding: 15px; margin: 8px 0; border: 2px solid #eee; border-radius: 8px; cursor: pointer; text-align: left; font-size: 1.1rem; background: white; transition: 0.2s; color: var(--ihk-text); }
-        .option-btn:hover { border-color: var(--ihk-blau); background: #f9f9f9; }
-        
-        /* Richtig/Falsch Farben bleiben wegen Signalwirkung */
-        .option-btn.correct { border-color: var(--success); background: #dff6dd; color: var(--success); font-weight: bold; }
-        .option-btn.wrong { border-color: var(--error); background: #fde7e9; color: var(--error); }
-        
-        .feedback { margin-top: 25px; padding: 15px; border-radius: 8px; display: none; font-weight: 500; }
-        
-        /* Navigations-Buttons */
-        .back-link { border:none; background:none; color:var(--ihk-blau); cursor:pointer; margin-bottom:20px; font-weight:bold; font-size: 1rem; padding: 0;}
-        .next-btn { margin-top:25px; padding:12px 25px; background:var(--ihk-blau); color:white; border:none; border-radius:6px; cursor:pointer; font-weight:bold; transition: 0.2s; }
-        .next-btn:hover { background-color: #003a69; }
-
-        /* Bilder im Quiz */
-        img.quiz-img { width: 100%; max-height: 250px; object-fit: contain; margin-bottom: 15px; border-radius: 8px; border: 1px solid #ddd; }
+        :root { --ihk-blau: #00457D; --ihk-rot: #E3001B; --ihk-bg: #F0F2F5; --success: #107c10; --error: #a4262c; }
+        body { font-family: 'Segoe UI', sans-serif; background: var(--ihk-bg); margin: 0; display: flex; height: 100vh; }
+        .sidebar { width: 60px; background: var(--ihk-blau); display: flex; flex-direction: column; align-items: center; padding-top: 20px; color: white; }
+        .main { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+        .topbar { height: 48px; background: var(--ihk-blau); color: white; display: flex; align-items: center; padding: 0 20px; font-weight: 600; }
+        .content { flex: 1; padding: 25px; overflow-y: auto; }
+        .header { display: flex; justify-content: space-between; align-items: center; background: white; padding: 15px 20px; border-radius: 8px; margin-bottom: 20px; border-bottom: 3px solid var(--ihk-rot); }
+        .logo { height: 35px; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 20px; }
+        .card { background: white; border-radius: 10px; padding: 25px; text-align: center; cursor: pointer; border: 2px solid transparent; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        .card.active { border-color: var(--ihk-blau); background: #eef6ff; }
+        .icon { font-size: 2.5rem; display: block; margin-bottom: 10px; }
+        .start-btn { width: 100%; background: var(--ihk-rot); color: white; border: none; padding: 15px; border-radius: 10px; font-weight: bold; font-size: 1.2rem; cursor: pointer; margin-top: 20px; }
+        .start-btn:disabled { background: #ccc; }
+        .quiz { display: none; background: white; padding: 30px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        .opt { width: 100%; padding: 12px; margin: 5px 0; border: 1px solid #ddd; border-radius: 5px; cursor: pointer; text-align: left; background: white; }
+        .opt.correct { background: #dff6dd; border-color: var(--success); color: var(--success); font-weight: bold; }
+        .opt.wrong { background: #fde7e9; border-color: var(--error); color: var(--error); }
     </style>
 </head>
 <body>
-
-    <div class="teams-sidebar">
-        <div class="sidebar-icon">🏠</div><div class="sidebar-icon">💬</div><div class="sidebar-icon">👥</div>
-    </div>
-
-    <div class="main-container">
-        <div class="teams-topbar"><span class="topbar-title">IHK Akademie Schwaben - Digitales Lernportal</span></div>
-
-        <div class="app-content">
-            <div class="app-header">
-                <img src="https://www.ihk-akademie-schwaben.de/fileadmin/templates/images/logo_ihk_akademie_schwaben.png" alt="IHK Akademie Schwaben Logo" class="ihk-logo">
-                <div class="score-badge">🏆 <span id="totalScore">0 Punkte</span></div>
+    <div class="sidebar">🏠<br><br>💬<br><br>👥</div>
+    <div class="main">
+        <div class="topbar">IHK Akademie Schwaben - Quiz</div>
+        <div class="content">
+            <div class="header">
+                <img src="https://www.ihk-akademie-schwaben.de/fileadmin/templates/images/logo_ihk_akademie_schwaben.png" class="logo">
+                <b id="score">0 Pkt</b>
             </div>
-
-            <div id="dashboardView">
-                <h1 style="margin: 0 0 10px 0; font-size: 1.5rem; color: var(--ihk-blau);">Technik-Lern-App</h1>
-                <p style="color: var(--ihk-text-sec); font-size: 1.1rem; margin-top: 0;">Willkommen! Welches Thema möchtest du heute vertiefen?</p>
-                <div class="topics-grid" id="topicsGrid"></div>
-                <button class="start-quiz-btn" id="startBtn" onclick="startQuiz()" disabled>QUIZ STARTEN</button>
+            <div id="dash">
+                <div class="grid" id="topics"></div>
+                <button class="start-btn" id="sBtn" onclick="start()" disabled>QUIZ STARTEN</button>
             </div>
-
-            <div id="quizView" class="quiz-view">
-                <button onclick="showDashboard()" class="back-link">⬅ Zurück zum Dashboard</button>
-                <div id="quizContent">
-                    <h2 id="questionText" style="color: var(--ihk-blau); margin-top: 0;">Frage...</h2>
-                    <div id="optionsContainer"></div>
-                    <div id="feedbackBox" class="feedback"></div>
-                    <button id="nextBtn" onclick="nextQuestion()" class="next-btn">Nächste Frage ➡</button>
-                </div>
+            <div id="qView" class="quiz">
+                <button onclick="home()" style="border:none; background:none; color:var(--ihk-blau); cursor:pointer;">⬅ Zurück</button>
+                <h2 id="qT">Frage</h2>
+                <div id="opts"></div>
+                <div id="fb" style="margin-top:15px; padding:10px; border-radius:5px; display:none;"></div>
+                <button id="nB" onclick="next()" style="display:none; margin-top:15px; background:var(--ihk-blau); color:white; border:none; padding:10px 20px; border-radius:5px; cursor:pointer;">Weiter</button>
             </div>
         </div>
     </div>
-
 <script>
-    // ============================================================
-    // AUSBILDER-BEREICH: HIER FRAGEN UND BILDER EINFÜGEN
-    // ============================================================
-    
-    const allQuestions = [
-        { 
-            topic: "Steuerungstechnik", level: 1, 
-            q: "Was bedeutet die Abkürzung 'SPS'?", 
-            options: ["Sicherheits-Prüf-System", "Speicherprogrammierbare Steuerung", "Serielle Prozess-Steuerung"], 
-            correct: 1, hint: "Auf Englisch heißt es PLC (Programmable Logic Controller)." 
-        },
-        { 
-            topic: "Metalltechnik", level: 1, 
-            q: "Welches Werkzeug nutzt man zum Anreißen?", 
-            options: ["Bleistift", "Reißnadel", "Feile"], 
-            correct: 1, hint: "Die gehärtete Spitze der Reißnadel ritzt die Oberfläche an." 
-        },
-        { 
-            topic: "Elektrotechnik", level: 1, 
-            q: "In welcher Einheit wird der elektrische Widerstand gemessen?", 
-            options: ["Volt", "Ampere", "Ohm"], 
-            correct: 2, hint: "Die Einheit ist Ohm (Ω)." 
-        },
-        { 
-            topic: "Techn. Kommunikation", level: 2, 
-            q: "Welche Ansicht wird hier durch den Pfeil dargestellt?", 
-            image: "https://via.placeholder.com/400x200?text=Beispielbild+Techn.+Zeichnung", // Platzhalter für deine GitHub-Bild-URL
-            options: ["Vorderansicht", "Draufsicht", "Seitenansicht"], 
-            correct: 2, hint: "Prüfe die Projektionsmethode (Pfeilrichtung)." 
-        },
-        { 
-            topic: "Fachrechnen", level: 2, 
-            q: "Berechne die Schnittgeschwindigkeit v bei d=20mm und n=500 U/min.", 
-            options: ["v = 31,4 m/min", "v = 15,7 m/min", "v = 62,8 m/min"], 
-            correct: 0, hint: "Formel: v = d * π * n / 1000" 
-        }
+    const data = [
+        { t: "Metalltechnik", q: "Welches Werkzeug nutzt man zum Anreißen?", o: ["Hammer", "Reißnadel", "Feile"], c: 1, h: "Die Reißnadel ritzt Metall an." },
+        { t: "Steuerungstechnik", q: "Was bedeutet SPS?", o: ["Sicherheits-System", "Speicherp. Steuerung", "Serielle Steuerung"], c: 1, h: "SPS ist das Herz der Automatisierung." },
+        { t: "Elektrotechnik", q: "Einheit des Widerstands?", o: ["Volt", "Ampere", "Ohm"], c: 2, h: "Widerstand wird in Ohm gemessen." }
     ];
+    let pts = 0, sel = null, pool = [], idx = 0;
+    const icons = { "Metalltechnik": "⚙️", "Steuerungstechnik": "🕹️", "Elektrotechnik": "⚡" };
 
-    // ============================================================
-    // APP LOGIK
-    // ============================================================
-
-    let currentScore = 0;
-    let selectedTopic = null;
-    let quizPool = [];
-    let currentIdx = 0;
-
-    const topicIcons = {
-        "Metalltechnik": "⚙️",
-        "Elektrotechnik": "⚡",
-        "Mechatronik": "🤖",
-        "Sicherheit & Umwelt": "⛑️",
-        "Fachrechnen": "📐",
-        "Techn. Kommunikation": "🖌️",
-        "Steuerungstechnik": "🕹️"
-    };
-
-    function initDashboard() {
-        const grid = document.getElementById('topicsGrid');
-        const topics = [...new Set(allQuestions.map(q => q.topic))];
-        grid.innerHTML = "";
-        topics.forEach(t => {
-            const card = document.createElement('div');
-            card.className = 'topic-card';
-            const icon = topicIcons[t] || "📚";
-            card.innerHTML = `<span class="topic-icon">${icon}</span><span class="topic-name">${t}</span>`;
-            card.onclick = () => {
-                document.querySelectorAll('.topic-card').forEach(c => c.classList.remove('active'));
-                card.classList.add('active');
-                selectedTopic = t;
-                document.getElementById('startBtn').disabled = false;
+    function init() {
+        const g = document.getElementById('topics');
+        const ts = [...new Set(data.map(d => d.t))];
+        g.innerHTML = "";
+        ts.forEach(t => {
+            const c = document.createElement('div');
+            c.className = 'card';
+            c.innerHTML = `<span class="icon">${icons[t]||'📚'}</span><b>${t}</b>`;
+            c.onclick = () => {
+                document.querySelectorAll('.card').forEach(x => x.classList.remove('active'));
+                c.classList.add('active'); sel = t; document.getElementById('sBtn').disabled = false;
             };
-            grid.appendChild(card);
+            g.appendChild(c);
         });
     }
-
-    function startQuiz() {
-        quizPool = allQuestions.filter(q => q.topic === selectedTopic);
-        currentIdx = 0;
-        document.getElementById('dashboardView').style.display = 'none';
-        document.getElementById('quizView').style.display = 'block';
-        loadQuestion();
+    function start() {
+        pool = data.filter(d => d.t === sel); idx = 0;
+        document.getElementById('dash').style.display = 'none';
+        document.getElementById('qView').style.display = 'block';
+        load();
     }
-
-    function loadQuestion() {
-        const q = quizPool[currentIdx];
-        const container = document.getElementById('optionsContainer');
-        const qText = document.getElementById('questionText');
-        
-        // Bild-Logik
-        let imgTag = q.image ? `<img src="${q.image}" class="quiz-img">` : "";
-        qText.innerHTML = imgTag + `<div>${q.q}</div>`;
-        
-        container.innerHTML = "";
-        document.getElementById('feedbackBox').style.display = 'none';
-        document.getElementById('nextBtn').style.display = 'none';
-
-        q.options.forEach((opt, i) => {
-            const btn = document.createElement('button');
-            btn.className = 'option-btn';
-            btn.innerText = opt;
-            btn.onclick = () => checkAnswer(btn, i, q);
-            container.appendChild(btn);
+    function load() {
+        const q = pool[idx];
+        document.getElementById('qT').innerText = q.q;
+        const oC = document.getElementById('opts'); oC.innerHTML = "";
+        document.getElementById('fb').style.display = 'none';
+        document.getElementById('nB').style.display = 'none';
+        q.o.forEach((o, i) => {
+            const b = document.createElement('button'); b.className = 'opt'; b.innerText = o;
+            b.onclick = () => {
+                document.querySelectorAll('.opt').forEach(x => x.disabled = true);
+                const f = document.getElementById('fb'); f.style.display = 'block';
+                if(i === q.c) { b.classList.add('correct'); f.innerHTML = "Richtig! " + q.h; f.style.background = "#dff6dd"; pts += 10; document.getElementById('score').innerText = pts + " Pkt"; }
+                else { b.classList.add('wrong'); f.innerHTML = "Falsch. " + q.h; f.style.background = "#fde7e9"; }
+                if(idx < pool.length - 1) document.getElementById('nB').style.display = 'block';
+                else setTimeout(() => { alert("Fertig!"); home(); }, 2000);
+            };
+            oC.appendChild(b);
         });
     }
-
-    function checkAnswer(btn, idx, q) {
-        document.querySelectorAll('.option-btn').forEach(b => b.disabled = true);
-        const fb = document.getElementById('feedbackBox');
-        fb.style.display = 'block';
-
-        if(idx === q.correct) {
-            btn.classList.add('correct');
-            fb.innerHTML = `✅ Richtig! +${q.level * 10} Punkte.<br><small>${q.hint}</small>`;
-            fb.style.background = "#dff6dd";
-            fb.style.color = "var(--success)";
-            updateScore(q.level * 10);
-        } else {
-            btn.classList.add('wrong');
-            fb.innerHTML = `❌ Falsch.<br><small>${q.hint}</small>`;
-            fb.style.background = "#fde7e9";
-            fb.style.color = "var(--error)";
-        }
-        
-        if(currentIdx < quizPool.length - 1) document.getElementById('nextBtn').style.display = 'block';
-        else setTimeout(() => { alert("Glückwunsch! Du hast das Thema " + selectedTopic + " beendet."); showDashboard(); }, 2500);
-    }
-
-    function nextQuestion() { currentIdx++; loadQuestion(); }
-    function updateScore(p) { currentScore += p; document.getElementById('totalScore').innerText = currentScore + " Punkte"; }
-    function showDashboard() { 
-        document.getElementById('dashboardView').style.display = 'block'; 
-        document.getElementById('quizView').style.display = 'none'; 
-        selectedTopic = null;
-        document.getElementById('startBtn').disabled = true;
-        initDashboard();
-    }
-
-    initDashboard();
+    function next() { idx++; load(); }
+    function home() { document.getElementById('dash').style.display = 'block'; document.getElementById('qView').style.display = 'none'; init(); }
+    init();
 </script>
 </body>
 </html>
