@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gewerblich-Technische Lern-App</title>
+    <style>
+        :root {
+            --teams-bg: #f5f5f5;
+            --teams-brand: #4b53bc;
+            --teams-neutral-bg: #ffffff;
+            --teams-text: #242424;
+            --teams-text-sec: #616161;
+            --success: #107c10;
+            --error: #a4262c;
+        }
+
+        body {
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            background-color: var(--teams-bg);
+            margin: 0; padding: 0; display: flex; height: 100vh; color: var(--teams-text);
+        }
+
+        /* Teams Layout Simulation */
+        .teams-sidebar { width: 64px; background-color: var(--teams-brand); display: flex; flex-direction: column; align-items: center; padding-top: 20px; }
+        .sidebar-icon { font-size: 20px; margin-bottom: 25px; opacity: 0.7; color: white; cursor: pointer; }
+        .main-container { flex: 1; display: flex; flex-direction: column; }
+        .teams-topbar { height: 48px; background-color: var(--teams-brand); display: flex; align-items: center; padding: 0 20px; color: white; }
+        
+        /* App Content */
+        .app-content { flex: 1; padding: 30px; overflow-y: auto; }
+        .app-header { display: flex; justify-content: space-between; align-items: center; background: var(--teams-neutral-bg); padding: 15px 25px; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); margin-bottom: 25px; }
+        .score-badge { color: #f59e0b; font-weight: bold; font-size: 1.2rem; display: flex; align-items: center; gap: 8px; }
+
+        /* Dashboard Grid (3 Spalten Fokus) */
+        .topics-grid { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); 
+            gap: 25px; 
+            margin-top: 20px; 
+            margin-bottom: 30px;
+        }
+
+        .topic-card { 
+            background: var(--teams-neutral-bg); 
+            border-radius: 12px; 
+            padding: 30px 20px; 
+            text-align: center; 
+            box-shadow: 0 2px 6px rgba(0,0,0,0.08); 
+            cursor: pointer; 
+            transition: 0.2s; 
+            border: 2px solid transparent;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .topic-card:hover { transform: translateY(-3px); box-shadow: 0 4px 12px rgba(0,0,0,0.12); }
+        .topic-card.active { border-color: var(--teams-brand); background-color: #f0f1fa; }
+        .topic-icon { font-size: 3rem; display: block; margin-bottom: 15px; }
+        .topic-name { font-weight: 600; font-size: 1.1rem; }
+        
+        .start-quiz-btn { 
+            grid-column: 1 / -1; 
+            background-color: var(--teams-brand); 
+            color: white; border: none; padding: 20px; 
+            border-radius: 12px; font-size: 1.3rem; font-weight: bold; cursor: pointer; 
+        }
+        .start-quiz-btn:disabled { background-color: #ccc; cursor: not-allowed; }
+
+        /* Quiz View */
+        .quiz-view { display: none; background: var(--teams-neutral-bg); border-radius: 12px; padding: 40px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        .option-btn { width: 100%; padding: 15px; margin: 8px 0; border: 2px solid #eee; border-radius: 8px; cursor: pointer; text-align: left; font-size: 1.1rem; background: white; transition: 0.2s; }
+        .option-btn:hover { background: #f9f9f9; }
+        .option-btn.correct { border-color: var(--success); background: #dff6dd; color: var(--success); font-weight: bold; }
+        .option-btn.wrong { border-color: var(--error); background: #fde7e9; color: var(--error); }
+        .feedback { margin-top: 25px; padding: 15px; border-radius: 8px; display: none; font-weight: 500; }
+        
+        img.quiz-img { width: 100%; max-height: 250px; object-fit: contain; margin-bottom: 15px; border-radius: 8px; border: 1px solid #ddd; }
+    </style>
+</head>
+<body>
+
+    <div class="teams-sidebar">
+        <div class="sidebar-icon">🏠</div><div class="sidebar-icon">💬</div><div class="sidebar-icon">👥</div>
+    </div>
+
+    <div class="main-container">
+        <div class="teams-topbar"><span>Microsoft Teams - Ausbildungscenter</span></div>
+
+        <div class="app-content">
+            <div class="app-header">
+                <h1 style="margin:0; font-size: 1.4rem;">Gewerblich-Technische Lern-App</h1>
+                <div class="score-badge">🏆 <span id="totalScore">0 Punkte</span></div>
+            </div>
+
+            <div id="dashboardView">
+                <p style="color: var(--teams-text-sec); font-size: 1.1rem;">Willkommen! Welches Thema möchtest du heute vertiefen?</p>
+                <div class="topics-grid" id="topicsGrid"></div>
+                <button class="start-quiz-btn" id="startBtn" onclick="startQuiz()" disabled>QUIZ STARTEN</button>
+            </div>
+
+            <div id="quizView" class="quiz-view">
+                <button onclick="showDashboard()" style="border:none; background:none; color:var(--teams-brand); cursor:pointer; margin-bottom:20px; font-weight:bold;">⬅ Zurück zum Dashboard</button>
+                <div id="quizContent">
+                    <h2 id="questionText">Frage...</h2>
+                    <div id="optionsContainer"></div>
+                    <div id="feedbackBox" class="feedback"></div>
+                    <button id="nextBtn" onclick="nextQuestion()" style="display:none; margin-top:25px; padding:12px 25px; background:var(--teams-brand); color:white; border:none; border-radius:6px; cursor:pointer; font-weight:bold;">Nächste Frage ➡</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+<script>
+    // ============================================================
+    // AUSBILDER-BEREICH: HIER FRAGEN UND BILDER EINFÜGEN
+    // ============================================================
+    
+    const allQuestions = [
+        { 
+            topic: "Steuerungstechnik", level: 1, 
+            q: "Was bedeutet die Abkürzung 'SPS'?", 
+            options: ["Sicherheits-Prüf-System", "Speicherprogrammierbare Steuerung", "Serielle Prozess-Steuerung"], 
+            correct: 1, hint: "Auf Englisch heißt es PLC (Programmable Logic Controller)." 
+        },
+        { 
+            topic: "Steuerungstechnik", level: 2, 
+            q: "Welches Ventil benötigt an BEIDEN Eingängen Druck, um ein Signal auszugeben?", 
+            options: ["Wechselventil (ODER)", "Zweidruckventil (UND)", "3/2-Wegeventil"], 
+            correct: 1, hint: "Das Zweidruckventil realisiert die logische UND-Verknüpfung." 
+        },
+        { 
+            topic: "Metalltechnik", level: 1, 
+            q: "Welches Werkzeug nutzt man zum Anreißen?", 
+            options: ["Bleistift", "Reißnadel", "Feile"], 
+            correct: 1, hint: "Die gehärtete Spitze der Reißnadel ritzt die Oberfläche an." 
+        },
+        { 
+            topic: "Elektrotechnik", level: 1, 
+            q: "In welcher Einheit wird der elektrische Widerstand gemessen?", 
+            options: ["Volt", "Ampere", "Ohm"], 
+            correct: 2, hint: "Die Einheit ist Ohm (Ω)." 
+        },
+        { 
+            topic: "Techn. Kommunikation", level: 2, 
+            q: "Welche Ansicht wird hier durch den Pfeil dargestellt?", 
+            image: "https://via.placeholder.com/400x200?text=Beispielbild+Techn.+Zeichnung", // Platzhalter für deine GitHub-Bild-URL
+            options: ["Vorderansicht", "Draufsicht", "Seitenansicht"], 
+            correct: 2, hint: "Prüfe die Projektionsmethode (Pfeilrichtung)." 
+        },
+        { 
+            topic: "Fachrechnen", level: 2, 
+            q: "Berechne die Schnittgeschwindigkeit v bei d=20mm und n=500 U/min.", 
+            options: ["v = 31,4 m/min", "v = 15,7 m/min", "v = 62,8 m/min"], 
+            correct: 0, hint: "Formel: v = d * π * n / 1000" 
+        }
+    ];
+
+    // ============================================================
+    // APP LOGIK
+    // ============================================================
+
+    let currentScore = 0;
+    let selectedTopic = null;
+    let quizPool = [];
+    let currentIdx = 0;
+
+    const topicIcons = {
+        "Metalltechnik": "⚙️",
+        "Elektrotechnik": "⚡",
+        "Mechatronik": "🤖",
+        "Sicherheit & Umwelt": "⛑️",
+        "Fachrechnen": "📐",
+        "Techn. Kommunikation": "🖌️",
+        "Steuerungstechnik": "🕹️"
+    };
+
+    function initDashboard() {
+        const grid = document.getElementById('topicsGrid');
+        const topics = [...new Set(allQuestions.map(q => q.topic))];
+        grid.innerHTML = "";
+        topics.forEach(t => {
+            const card = document.createElement('div');
+            card.className = 'topic-card';
+            const icon = topicIcons[t] || "📚";
+            card.innerHTML = `<span class="topic-icon">${icon}</span><span class="topic-name">${t}</span>`;
+            card.onclick = () => {
+                document.querySelectorAll('.topic-card').forEach(c => c.classList.remove('active'));
+                card.classList.add('active');
+                selectedTopic = t;
+                document.getElementById('startBtn').disabled = false;
+            };
+            grid.appendChild(card);
+        });
+    }
+
+    function startQuiz() {
+        quizPool = allQuestions.filter(q => q.topic === selectedTopic);
+        currentIdx = 0;
+        document.getElementById('dashboardView').style.display = 'none';
+        document.getElementById('quizView').style.display = 'block';
+        loadQuestion();
+    }
+
+    function loadQuestion() {
+        const q = quizPool[currentIdx];
+        const container = document.getElementById('optionsContainer');
+        const qText = document.getElementById('questionText');
+        
+        // Bild-Logik
+        let imgTag = q.image ? `<img src="${q.image}" class="quiz-img">` : "";
+        qText.innerHTML = imgTag + `<div>${q.q}</div>`;
+        
+        container.innerHTML = "";
+        document.getElementById('feedbackBox').style.display = 'none';
+        document.getElementById('nextBtn').style.display = 'none';
+
+        q.options.forEach((opt, i) => {
+            const btn = document.createElement('button');
+            btn.className = 'option-btn';
+            btn.innerText = opt;
+            btn.onclick = () => checkAnswer(btn, i, q);
+            container.appendChild(btn);
+        });
+    }
+
+    function checkAnswer(btn, idx, q) {
+        document.querySelectorAll('.option-btn').forEach(b => b.disabled = true);
+        const fb = document.getElementById('feedbackBox');
+        fb.style.display = 'block';
+
+        if(idx === q.correct) {
+            btn.classList.add('correct');
+            fb.innerHTML = `✅ Richtig! +${q.level * 10} Punkte.<br><small>${q.hint}</small>`;
+            fb.style.background = "#dff6dd";
+            fb.style.color = "var(--success)";
+            updateScore(q.level * 10);
+        } else {
+            btn.classList.add('wrong');
+            fb.innerHTML = `❌ Falsch.<br><small>${q.hint}</small>`;
+            fb.style.background = "#fde7e9";
+            fb.style.color = "var(--error)";
+        }
+        
+        if(currentIdx < quizPool.length - 1) document.getElementById('nextBtn').style.display = 'block';
+        else setTimeout(() => { alert("Glückwunsch! Du hast das Thema " + selectedTopic + " beendet."); showDashboard(); }, 2500);
+    }
+
+    function nextQuestion() { currentIdx++; loadQuestion(); }
+    function updateScore(p) { currentScore += p; document.getElementById('totalScore').innerText = currentScore + " Punkte"; }
+    function showDashboard() { 
+        document.getElementById('dashboardView').style.display = 'block'; 
+        document.getElementById('quizView').style.display = 'none'; 
+        selectedTopic = null;
+        document.getElementById('startBtn').disabled = true;
+        initDashboard();
+    }
+
+    initDashboard();
+</script>
+</body>
+</html>
