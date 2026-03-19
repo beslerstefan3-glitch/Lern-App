@@ -5,62 +5,126 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>IHK Akademie Schwaben - Lern-App</title>
     <style>
-        :root { --ihk-blau: #00457D; --ihk-rot: #E3001B; --bg: #f4f7f9; }
-        body { margin: 0; padding: 0; display: flex; height: 100vh; font-family: 'Segoe UI', sans-serif; background: var(--bg); color: #333; }
-        .sidebar { width: 64px; background: var(--ihk-blau); display: flex; flex-direction: column; align-items: center; padding-top: 20px; }
-        .nav-icon { font-size: 24px; color: white; margin-bottom: 30px; cursor: pointer; opacity: 0.7; transition: 0.2s; }
+        :root {
+            --ihk-blau: #00457D;
+            --ihk-rot: #E3001B;
+            --bg: #f4f7f9;
+        }
+
+        body {
+            margin: 0; padding: 0; display: flex; height: 100vh;
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background-color: var(--bg); color: #333;
+        }
+
+        /* Sidebar Navigation */
+        .sidebar {
+            width: 64px; background-color: var(--ihk-blau);
+            display: flex; flex-direction: column; align-items: center; padding-top: 20px;
+        }
+        .nav-icon { 
+            font-size: 24px; color: white; margin-bottom: 30px; 
+            cursor: pointer; opacity: 0.7; transition: 0.2s; 
+        }
         .nav-icon:hover { opacity: 1; transform: scale(1.1); }
+
         .main { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
-        .topbar { height: 48px; background: var(--ihk-blau); color: white; display: flex; align-items: center; padding: 0 20px; font-weight: 600; }
+        .topbar { 
+            height: 48px; background: var(--ihk-blau); color: white; 
+            display: flex; align-items: center; padding: 0 20px; font-weight: 600; 
+        }
+
         .content { flex: 1; padding: 30px; overflow-y: auto; position: relative; }
-        #loginScreen { position: absolute; inset: 0; background: var(--bg); z-index: 100; display: flex; justify-content: center; align-items: center; }
-        .login-card { background: white; padding: 40px; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); text-align: center; width: 320px; }
-        input { width: 100%; padding: 12px; margin: 10px 0; border: 2px solid #ddd; border-radius: 6px; box-sizing: border-box; }
-        .app-header { background: white; padding: 15px 25px; border-radius: 8px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 5px rgba(0,0,0,0.05); margin-bottom: 25px; }
+
+        /* Login Screen */
+        #loginScreen {
+            position: absolute; inset: 0; background: var(--bg); z-index: 100;
+            display: flex; justify-content: center; align-items: center;
+        }
+        .login-card {
+            background: white; padding: 40px; border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1); text-align: center; width: 320px;
+        }
+        input { 
+            width: 100%; padding: 12px; margin: 10px 0; border: 2px solid #ddd; 
+            border-radius: 6px; box-sizing: border-box; 
+        }
+
+        /* Header & Stats */
+        .app-header {
+            background: white; padding: 15px 25px; border-radius: 8px;
+            display: flex; justify-content: space-between; align-items: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05); margin-bottom: 25px;
+        }
+
+        /* Dashboard Grid */
         .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; }
-        .topic-box { background: white; padding: 30px; border-radius: 12px; text-align: center; cursor: pointer; border: 2px solid transparent; box-shadow: 0 4px 6px rgba(0,0,0,0.05); transition: 0.2s; display: flex; flex-direction: column; align-items: center; }
+        .topic-box {
+            background: white; padding: 30px; border-radius: 12px; text-align: center;
+            cursor: pointer; border: 2px solid transparent; box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            transition: 0.2s; display: flex; flex-direction: column; align-items: center;
+        }
         .topic-box:hover { transform: translateY(-3px); box-shadow: 0 8px 15px rgba(0,0,0,0.1); }
         .topic-box.active { border-color: var(--ihk-rot); background: #fffafa; }
         .topic-box.exam { border: 2px dashed var(--ihk-rot); background: #fffdf0; }
-        .btn { background: var(--ihk-rot); color: white; border: none; padding: 15px; border-radius: 8px; font-weight: bold; cursor: pointer; width: 100%; font-size: 1rem; }
+
+        .btn {
+            background: var(--ihk-rot); color: white; border: none; padding: 15px;
+            border-radius: 8px; font-weight: bold; cursor: pointer; width: 100%; font-size: 1rem;
+        }
         .btn:disabled { background: #ccc; cursor: not-allowed; }
+
+        /* Views */
         .view { display: none; background: white; padding: 35px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
-        .opt-btn { width: 100%; padding: 15px; margin: 8px 0; border: 1px solid #ddd; border-radius: 8px; background: white; text-align: left; cursor: pointer; }
+        .opt-btn {
+            width: 100%; padding: 15px; margin: 8px 0; border: 1px solid #ddd;
+            border-radius: 8px; background: white; text-align: left; cursor: pointer; font-size: 1rem;
+        }
+        .opt-btn:hover { background: #f0f7ff; border-color: var(--ihk-blau); }
+
+        /* Leaderboard */
         .lb-entry { display: flex; justify-content: space-between; align-items: center; padding: 12px; border-bottom: 1px solid #eee; }
-        .del-btn { background: #ff4444; color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer; }
+        .del-btn { background: #ff4444; color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer; font-size: 0.7rem; }
     </style>
 </head>
 <body>
+
     <div class="sidebar">
-        <div class="nav-icon" onclick="goHome()">🏠</div>
-        <div class="nav-icon" onclick="showLeaderboard()">🏆</div>
+        <div class="nav-icon" onclick="goHome()" title="Home">🏠</div>
+        <div class="nav-icon" onclick="showLeaderboard()" title="Bestenliste">🏆</div>
     </div>
+
     <div class="main">
         <div class="topbar">IHK Akademie Schwaben - Lern-App</div>
+        
         <div class="content">
             <div id="loginScreen">
                 <div class="login-card">
                     <h2 style="color:var(--ihk-blau); margin-top:0;">Anmeldung</h2>
                     <input type="text" id="uName" placeholder="Dein Name...">
                     <input type="password" id="adminPw" placeholder="Admin-Passwort (optional)">
-                    <button class="btn" onclick="login()">Starten</button>
+                    <button class="btn" onclick="login()" style="margin-top:10px;">Loslegen</button>
                 </div>
             </div>
+
             <div id="uiHeader" class="app-header" style="display:none;">
                 <div id="userNameDisplay" style="font-weight:bold;">👤 Gast</div>
                 <div style="color:#f59e0b; font-weight:bold;">⭐ <span id="pointsDisplay">0</span> Pkt.</div>
             </div>
+
             <div id="dashboard" style="display:none;">
                 <h1 style="color:var(--ihk-blau); margin-top:0;">Themenbereiche</h1>
                 <div class="grid" id="topicGrid"></div>
                 <button class="btn" id="startBtn" onclick="initQuiz()" disabled style="margin-top:25px;">QUIZ STARTEN</button>
             </div>
+
             <div id="quizView" class="view">
-                <h2 id="qText" style="color:var(--ihk-blau);">Frage</h2>
+                <h2 id="qText" style="margin-top:0; color:var(--ihk-blau);">Frage</h2>
                 <div id="optContainer"></div>
             </div>
+
             <div id="leaderboardView" class="view">
-                <h2 style="color:var(--ihk-blau);">🏆 Bestenliste</h2>
+                <h2 style="color:var(--ihk-blau); margin-top:0;">🏆 Bestenliste</h2>
                 <div id="lList"></div>
                 <button class="btn" onclick="goHome()" style="margin-top:20px; background:var(--ihk-blau);">Zurück</button>
             </div>
@@ -68,28 +132,45 @@
     </div>
 
 <script>
-    const MASTER_PW = "ihk2024";
+    const MASTER_PW = "ihk2024"; // Admin Passwort
+
+    // ==========================================================
+    // FRAGEN-DATENBANK
+    // ==========================================================
     const questions = [
+
         // --- METALLTECHNIK ---
-        { t: "Metalltechnik", q: "Welches Kühlmittel wird beim Bohren von Stahl verwendet?", o: ["Bohremulsion", "Spiritus", "Wasser"], c: 0 },
+        { t: "Metalltechnik", q: "Welches Kühlmittel wird beim Bohren von Stahl meistens verwendet?", o: ["Schneidöl/Bohremulsion", "Spiritus", "Wasser"], c: 0 },
+        { t: "Metalltechnik", q: "Wie nennt man das Entfernen von scharfen Kanten?", o: ["Rändeln", "Entgraten", "Polieren"], c: 1 },
+
         // --- STEUERUNGSTECHNIK ---
-        { t: "Steuerungstechnik", q: "Was bedeutet SPS?", o: ["System-Plan", "Speicherprogrammierbare Steuerung", "Sensor-Steuerung"], c: 1 },
+        { t: "Steuerungstechnik", q: "Was bedeutet die Abkürzung SPS?", o: ["System-Plan", "Speicherprogrammierbare Steuerung", "Sensor-Steuerung"], c: 1 },
+
         // --- ELEKTROTECHNIK ---
-        { t: "Elektrotechnik", q: "Einheit des Widerstands?", o: ["Volt", "Ampere", "Ohm"], c: 2 },
+        { t: "Elektrotechnik", q: "In welcher Einheit wird der elektrische Widerstand gemessen?", o: ["Volt", "Ampere", "Ohm"], c: 2 },
+
         // --- TECHNISCHE MATHEMATIK ---
-        { t: "Technische Mathematik", q: "Schnittgeschwindigkeit v_c Formel?", o: ["(d * π * n) / 1000", "F / A", "U * I"], c: 0 },
-        { t: "Technische Mathematik", q: "Übersetzung i bei Z1=20 und Z2=60?", o: ["0,33", "3", "40"], c: 1 },
+        { t: "Technische Mathematik", q: "Wie lautet die Formel für die Schnittgeschwindigkeit v_c?", o: ["v_c = (d * π * n) / 1000", "v_c = F / A", "v_c = U * I"], c: 0 },
+        { t: "Technische Mathematik", q: "Ein Bauteil (100mm) soll um 5% gekürzt werden. Neue Länge?", o: ["95mm", "105mm", "50mm"], c: 0 },
+
         // --- PRÜFUNGSVORBEREITUNG ---
-        { t: "Prüfungsvorbereitung", q: "Was ist zur Prüfung zwingend mitzubringen?", o: ["Berichtsheft", "Lichtbildausweis", "Beides"], c: 2 }
+        { t: "Prüfungsvorbereitung", q: "Darf ein nicht programmierbarer Taschenrechner genutzt werden?", o: ["Ja", "Nein", "Nur im Fachgespräch"], c: 0 }
+
     ];
 
     let user = "", score = 0, selectedTopic = null, pool = [], currentQIdx = 0, isAdmin = false;
 
     function login() {
         const name = document.getElementById('uName').value;
-        if(!name) return alert("Name?");
+        const pw = document.getElementById('adminPw').value;
+        if(!name) return alert("Bitte Namen eingeben!");
+        
         user = name;
-        if(document.getElementById('adminPw').value === MASTER_PW) { isAdmin = true; user = "⭐ Admin (" + name + ")"; }
+        if(pw === MASTER_PW) {
+            isAdmin = true;
+            user = "⭐ Admin (" + name + ")";
+        }
+
         document.getElementById('userNameDisplay').innerText = "👤 " + user;
         document.getElementById('loginScreen').style.display = 'none';
         document.getElementById('uiHeader').style.display = 'flex';
@@ -99,15 +180,31 @@
 
     function renderTopics() {
         const g = document.getElementById('topicGrid');
-        const ts = ["Metalltechnik", "Steuerungstechnik", "Elektrotechnik", "Technische Mathematik", "Prüfungsvorbereitung"];
+        // Liste der Themen (MUSS exakt mit 't' in questions übereinstimmen)
+        const ts = [
+            "Metalltechnik", 
+            "Steuerungstechnik", 
+            "Elektrotechnik", 
+            "Technische Mathematik", 
+            "Prüfungsvorbereitung"
+        ];
+        
         g.innerHTML = "";
         ts.forEach(t => {
             const d = document.createElement('div');
             d.className = 'topic-box' + (t === "Prüfungsvorbereitung" ? " exam" : "");
-            d.innerHTML = `<span style="font-size:2rem; margin-bottom:10px;">${t === 'Technische Mathematik' ? '🧮' : (t === 'Prüfungsvorbereitung' ? '🎓' : '📚')}</span><b>${t}</b>`;
+            
+            // Icon Logik
+            let icon = "📚";
+            if(t === "Technische Mathematik") icon = "🧮";
+            if(t === "Prüfungsvorbereitung") icon = "🎓";
+
+            d.innerHTML = `<span style="font-size:2rem; margin-bottom:10px;">${icon}</span><b>${t}</b>`;
+            
             d.onclick = () => {
                 document.querySelectorAll('.topic-box').forEach(b => b.classList.remove('active'));
-                d.classList.add('active'); selectedTopic = t;
+                d.classList.add('active'); 
+                selectedTopic = t;
                 document.getElementById('startBtn').disabled = false;
             };
             g.appendChild(d);
@@ -116,8 +213,8 @@
 
     function initQuiz() {
         pool = questions.filter(q => q.t === selectedTopic);
-        if(pool.length === 0) return alert("Keine Fragen!");
-        pool.sort(() => Math.random() - 0.5);
+        if(pool.length === 0) return alert("Keine Fragen für dieses Thema gefunden!");
+        pool.sort(() => Math.random() - 0.5); // Zufällige Reihenfolge
         currentQIdx = 0;
         showView('quizView');
         loadQuestion();
@@ -130,13 +227,21 @@
         container.innerHTML = "";
         q.o.forEach((opt, i) => {
             const b = document.createElement('button');
-            b.className = 'opt-btn'; b.innerText = opt;
+            b.className = 'opt-btn';
+            b.innerText = opt;
             b.onclick = () => {
-                if(i === q.c) { score += 10; document.getElementById('pointsDisplay').innerText = score; alert("Richtig!"); saveScore(); }
-                else { alert("Falsch!"); }
+                if(i === q.c) { 
+                    score += 10; 
+                    document.getElementById('pointsDisplay').innerText = score; 
+                    alert("Richtig!"); 
+                    saveScore(); 
+                } else { 
+                    alert("Leider falsch!"); 
+                }
+                
                 currentQIdx++;
                 if(currentQIdx < pool.length) loadQuestion();
-                else { alert("Fertig!"); goHome(); }
+                else { alert("Thema beendet!"); goHome(); }
             };
             container.appendChild(b);
         });
@@ -156,12 +261,18 @@
         showView('leaderboardView');
         const lb = JSON.parse(localStorage.getItem('ihk_app_lb') || '[]');
         document.getElementById('lList').innerHTML = lb.map(u => `
-            <div class="lb-entry"><span>${u.n}</span><span><b>${u.s} Pkt.</b> ${isAdmin ? `<button class="del-btn" onclick="deleteEntry('${u.n}')">X</button>` : ''}</span></div>
+            <div class="lb-entry">
+                <span>${u.n}</span>
+                <span>
+                    <b>${u.s} Pkt.</b>
+                    ${isAdmin ? `<button class="del-btn" onclick="deleteEntry('${u.n}')">Löschen</button>` : ''}
+                </span>
+            </div>
         `).join('');
     }
 
     function deleteEntry(name) {
-        if(!confirm("Löschen?")) return;
+        if(!confirm(name + " wirklich löschen?")) return;
         let lb = JSON.parse(localStorage.getItem('ihk_app_lb') || '[]');
         lb = lb.filter(u => u.n !== name);
         localStorage.setItem('ihk_app_lb', JSON.stringify(lb));
