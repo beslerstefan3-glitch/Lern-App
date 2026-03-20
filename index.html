@@ -7,23 +7,35 @@
     <style>
         :root { --ihk-blau: #00457D; --ihk-rot: #E3001B; --bg: #f4f7f9; }
         body { margin: 0; font-family: 'Segoe UI', sans-serif; background: var(--bg); display: flex; height: 100vh; overflow: hidden; }
+        
+        /* Sidebar Navigation */
         .sidebar { width: 70px; background: var(--ihk-blau); display: flex; flex-direction: column; align-items: center; padding-top: 20px; flex-shrink: 0; }
         .nav-icon { font-size: 26px; color: white; margin-bottom: 25px; cursor: pointer; opacity: 0.8; transition: 0.3s; }
         .nav-icon:hover { opacity: 1; transform: scale(1.1); }
+
         .main { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
         .topbar { height: 50px; background: var(--ihk-blau); color: white; display: flex; align-items: center; padding: 0 20px; font-weight: bold; justify-content: space-between; }
+        
         .content { flex: 1; padding: 25px; overflow-y: auto; display: flex; flex-direction: column; align-items: center; }
         .screen { display: none; width: 100%; max-width: 800px; }
         .active-screen { display: block; }
+
+        /* UI Karten & Buttons */
         .card { background: white; padding: 30px; border-radius: 15px; box-shadow: 0 8px 20px rgba(0,0,0,0.1); width: 100%; box-sizing: border-box; }
-        .topic-box { background: #eef6ff; padding: 40px; border-radius: 15px; border: 3px solid var(--ihk-blau); text-align: center; cursor: pointer; transition: 0.3s; }
+        .topic-box { background: #eef6ff; padding: 50px; border-radius: 15px; border: 3px solid var(--ihk-blau); text-align: center; cursor: pointer; transition: 0.3s; }
+        .topic-box:hover { transform: translateY(-5px); box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
+        
         .opt-btn { width: 100%; padding: 15px; margin: 10px 0; border: 1px solid #ddd; border-radius: 8px; background: white; text-align: left; cursor: pointer; font-size: 1rem; transition: 0.2s; }
         .opt-btn:hover { background: #f0f7ff; border-color: var(--ihk-blau); }
+        
         .btn-primary { background: var(--ihk-rot); color: white; border: none; padding: 15px 30px; border-radius: 8px; font-weight: bold; cursor: pointer; width: 100%; margin-top: 10px; }
+        
+        /* Erklärungs-Overlay */
         #explOverlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.85); z-index: 10000; align-items: center; justify-content: center; padding: 20px; }
         .expl-box { background: white; padding: 30px; border-radius: 15px; max-width: 500px; width: 100%; text-align: center; }
+
         input { width: 100%; padding: 12px; margin-bottom: 15px; border: 1px solid #ccc; border-radius: 8px; box-sizing: border-box; }
-        .lb-entry { display: flex; justify-content: space-between; padding: 10px; border-bottom: 1px solid #eee; }
+        .lb-entry { display: flex; justify-content: space-between; padding: 12px; border-bottom: 1px solid #eee; background: #fff; margin-bottom: 5px; border-radius: 5px; }
     </style>
 </head>
 <body>
@@ -37,151 +49,232 @@
     </div>
 
     <div class="sidebar">
-        <div class="nav-icon" onclick="nav('screen-dashboard')">🏠</div>
-        <div class="nav-icon" onclick="showLB()">🏆</div>
+        <div class="nav-icon" title="Startseite" onclick="nav('screen-dashboard')">🏠</div>
+        <div class="nav-icon" title="Bestenliste" onclick="showLB()">🏆</div>
     </div>
 
     <div class="main">
         <div class="topbar">
             <span>IHK AKADEMIE - Technik Trainer</span>
-            <span id="displayUser"></span>
+            <span id="displayUser" style="font-weight: normal; font-size: 0.9rem;"></span>
         </div>
         
         <div class="content">
             <div id="screen-login" class="screen active-screen">
-                <div class="card" style="max-width: 400px;">
-                    <h2 style="color:var(--ihk-blau)">Anmeldung</h2>
+                <div class="card" style="max-width: 400px; margin-top: 50px;">
+                    <h2 style="color:var(--ihk-blau); margin-top:0;">Anmeldung</h2>
+                    <p style="color:#666; font-size: 0.9rem;">Bitte gib deinen Namen ein, um zu starten.</p>
                     <input type="text" id="userName" placeholder="Dein Name...">
                     <input type="password" id="adminKey" placeholder="Admin-Passwort (optional)">
-                    <button class="btn-primary" onclick="doLogin()">Starten</button>
+                    <button class="btn-primary" onclick="doLogin()">Login & Start</button>
                 </div>
             </div>
 
             <div id="screen-dashboard" class="screen">
-                <h1 style="color:var(--ihk-blau)">Themenauswahl</h1>
+                <h1 style="color:var(--ihk-blau); margin-top:0;">Themenbereiche</h1>
                 <div class="topic-box" onclick="initQuiz()">
                     <h2 style="margin:0; color:var(--ihk-blau)">Technische Mathematik</h2>
-                    <p style="margin:10px 0 0 0; color:#555;">Fragenpool: Seite 1 - 22</p>
+                    <p style="margin:10px 0 0 0; color:#555;">Alle Aufgaben: Seite 1 bis 22</p>
+                    <div style="margin-top:15px; font-weight:bold; color:var(--ihk-rot);">Klicken zum Starten</div>
                 </div>
             </div>
 
             <div id="screen-quiz" class="screen">
                 <div class="card">
-                    <div style="display:flex; justify-content:space-between; margin-bottom:15px; color:var(--ihk-rot); font-weight:bold;">
+                    <div style="display:flex; justify-content:space-between; margin-bottom:20px; color:var(--ihk-rot); font-weight:bold;">
                         <span id="qProgress"></span>
-                        <span>Score: <span id="currentScore">0</span></span>
+                        <span>Punkte: <span id="currentScore">0</span></span>
                     </div>
-                    <h2 id="questionText" style="margin-top:0; color:var(--ihk-blau);"></h2>
+                    <h2 id="questionText" style="margin-top:0; color:var(--ihk-blau); line-height:1.4;"></h2>
                     <div id="optionsArea"></div>
                 </div>
             </div>
 
             <div id="screen-leaderboard" class="screen">
                 <div class="card">
-                    <h1 style="color:var(--ihk-blau)">🏆 Bestenliste</h1>
+                    <h1 style="color:var(--ihk-blau); margin-top:0;">🏆 Bestenliste</h1>
                     <div id="lbList"></div>
-                    <button class="btn-primary" onclick="nav('screen-dashboard')">Zurück</button>
+                    <button class="btn-primary" onclick="nav('screen-dashboard')" style="margin-top:20px;">Zurück zum Hauptmenü</button>
                 </div>
             </div>
         </div>
     </div>
 
 <script>
-    const ADMIN_PW = "ihk2024";
+    const ADMIN_PW = "ihk2024"; // Passwort für Admin-Funktionen
 
-    // ============================================================
-    // START: FRAGEN-DATENBANK (HIER FRAGEN HINZUFÜGEN ODER ÄNDERN)
-    // ============================================================
+    // =========================================================================
+    // START: FRAGEN-DATENBANK (Hier kannst du ganz leicht neue Fragen einfügen)
+    // =========================================================================
+    
     const db = [
-        // --- BEREICH: RUNDEN & GRUNDLAGEN ---
-        { q: "Runde 8,579 613 auf drei Ziffern hinter dem Komma.", o: ["8,579", "8,578", "8,580", "8,581"], c: 2, hint: "Vierte Stelle ist 6 (ab 5 aufrunden). Die 9 wird 10, Übertrag auf 7 -> 8,580." },
-        { q: "Runde 1,995 auf zwei Ziffern hinter dem Komma.", o: ["1,90", "1,96", "1,99", "2,00"], c: 3, hint: "Dritte Stelle ist 5. Aufrunden! 1,99 + 0,01 = 2,00." },
-        
-        // --- BEREICH: MESSWERTE (GENAUIGKEIT) ---
-        { q: "Berechne L = 1,25m + 251cm + 15cm + 14,3mm (Regeln f. Messwerte).", o: ["3924,3 mm", "392,4 cm", "3,92 m", "3,9 m"], c: 2, hint: "Ergebnis darf nicht genauer als das ungenaueste Maß (1,25m) sein. Summe 3,9243m -> 3,92m." },
-        { q: "Dichte 0,87 kg/dm³, Vol. 43,5 L. Masse m korrekt gerundet?", o: ["37,845 kg", "38 kg", "37,8 kg", "37,85 kg"], c: 2, hint: "0,87 hat 2 Nachkommastellen. Ergebnis 37,845 muss auf 37,8 kg gerundet werden." },
+        // --- Seite 1-2: Runden ---
+        { 
+            q: "Runde 8,579 613 auf drei Ziffern hinter dem Komma.", 
+            o: ["8,579", "8,578", "8,580", "8,581"], 
+            c: 2, 
+            hint: "Schau dir die vierte Stelle an: Es ist eine 6. Ab 5 wird die Stelle davor aufgerundet. Aus der 9 wird eine 10, was die 7 zur 8 macht -> 8,580." 
+        },
+        { 
+            q: "Welche Rundung auf 2 Stellen ist laut Tabelle RICHTIG?", 
+            o: ["1,995 -> 1,90", "7,034 -> 7,04", "15,446 -> 15,45"], 
+            c: 2, 
+            hint: "Bei 15,446 ist die dritte Stelle eine 6 (also >= 5). Die 4 davor wird auf 5 aufgerundet." 
+        },
 
-        // --- BEREICH: FORMELUMSTELLUNG ---
-        { q: "Stelle nach t um: P = W / t", o: ["t = W + P", "t = P / W", "t = W / P", "t = W * P"], c: 2, hint: "t wandert nach oben, P nach unten." },
-        { q: "Stelle nach d um: vc = (d * π * n) / 1000", o: ["d = (1000 * vc) / (π * n)", "d = (π * n) / (1000 * vc)", "d = 1000 / (vc * π * n)"], c: 0, hint: "1000 mal vc durch (Pi mal n)." },
+        // --- Seite 3: Messwerte & Genauigkeit ---
+        { 
+            q: "Berechne L = 1,25m + 251cm + 15cm + 14,3mm (Messwert-Regeln beachten).", 
+            o: ["3924,3 mm", "392,4 cm", "3,92 m", "3,9 m"], 
+            c: 2, 
+            hint: "Das Ergebnis darf nicht genauer sein als der ungenaueste Einzelwert (1,25m hat nur 2 Dezimalstellen). Die Summe ist 3,9243m, gerundet also 3,92m." 
+        },
 
-        // --- BEREICH: TECHNIK-RECHNEN ---
-        { q: "Stab (895 mm) im Verhältnis 2:3 geteilt. Wie lang ist das GRÖẞERE Stück?", o: ["179 mm", "358 mm", "537 mm"], c: 2, hint: "895 / 5 Anteile = 179. Großes Stück: 3 * 179 = 537 mm." },
-        { q: "Leiste 1600mm, 14 Löcher, Rand je 25,5mm. Abstand p?", o: ["123 mm", "121 mm", "119 mm", "110 mm"], c: 2, hint: "(1600 - 51) / (14-1) = 119,15 -> 119 mm." },
-        { q: "Stange 5,5m, 15 Stücke à 240,5mm, Sägeblatt 3mm. Rest L?", o: ["1,4 m", "1,6 m", "1,8 m", "1,9 m"], c: 2, hint: "15 * (240,5+3) = 3652,5. 5500 - 3652,5 = 1847,5 -> 1,8 m." },
+        // --- Seite 4-6: Formelumstellungen ---
+        { 
+            q: "Stelle die Formel P = W / t nach der Zeit t um.", 
+            o: ["t = W + P", "t = P / W", "t = W / P", "t = W * P"], 
+            c: 2, 
+            hint: "Um t alleine stehen zu haben, tauschen t und P einfach die Plätze." 
+        },
+        { 
+            q: "Stelle vc = (d * π * n) / 1000 nach dem Durchmesser d um.", 
+            o: ["d = (1000 * vc) / (π * n)", "d = (π * n) / (1000 * vc)", "d = 1000 / (vc * π * n)"], 
+            c: 0, 
+            hint: "Bringe die 1000 mit '*' auf die andere Seite und Pi sowie n mit '/' unter den Bruchstrich." 
+        },
 
-        // --- BEREICH: EINHEITEN ---
-        { q: "Wieviel dm² sind 6317 cm²?", o: ["0,6317 dm²", "63,17 dm²", "631,7 dm²"], c: 1, hint: "Umrechnung Fläche ist 100: 6317 / 100 = 63,17 dm²." }
+        // --- Seite 15: Lochabstände ---
+        { 
+            q: "Leiste 1600mm, 14 Löcher, Randabstände je 25,5mm. Berechne den Lochabstand p.", 
+            o: ["123,0 mm", "121,5 mm", "119,0 mm", "110,2 mm"], 
+            c: 2, 
+            hint: "Nutzlänge = 1600 - (2 * 25,5) = 1549mm. Anzahl der Abstände = 14 - 1 = 13. p = 1549 / 13 = 119,15... mm. Gerundet 119,0 mm." 
+        },
+
+        // --- Seite 22: Verschnitt ---
+        { 
+            q: "Stange 5,5m, 15 Stücke à 240,5mm, Sägeblattbreite 3mm. Berechne Rest L.", 
+            o: ["1,4 m", "1,6 m", "1,8 m", "1,9 m"], 
+            c: 2, 
+            hint: "Verbrauch pro Stück inkl. Schnitt: 243,5mm. Gesamtverbrauch: 15 * 243,5 = 3652,5mm. Rest: 5500 - 3652,5 = 1847,5mm (ca. 1,8m)." 
+        }
     ];
-    // ============================================================
+
+    // =========================================================================
     // ENDE: FRAGEN-DATENBANK
-    // ============================================================
+    // =========================================================================
 
-    let user = "", isAdmin = false, score = 0, qIdx = 0, pool = [];
+    let currentUser = "";
+    let isAdmin = false;
+    let score = 0;
+    let qIdx = 0;
+    let pool = [];
 
+    // Login Logik
     function doLogin() {
-        const n = document.getElementById('userName').value;
-        const p = document.getElementById('adminKey').value;
-        if(!n) return alert("Name fehlt!");
-        user = n;
-        if(p === ADMIN_PW) { isAdmin = true; user = "⭐ Admin (" + n + ")"; }
-        document.getElementById('displayUser').innerText = "Angemeldet: " + user;
+        const name = document.getElementById('userName').value.trim();
+        const pass = document.getElementById('adminKey').value;
+        if(!name) return alert("Bitte gib einen Namen ein!");
+        
+        currentUser = name;
+        if(pass === ADMIN_PW) {
+            isAdmin = true;
+            currentUser = "⭐ Admin (" + name + ")";
+        }
+        
+        document.getElementById('displayUser').innerText = "Angemeldet: " + currentUser;
         nav('screen-dashboard');
     }
 
+    // Quiz Starten
     function initQuiz() {
-        pool = [...db].sort(() => Math.random() - 0.5);
-        qIdx = 0; score = 0;
+        pool = [...db].sort(() => Math.random() - 0.5); // Fragen mischen
+        qIdx = 0;
+        score = 0;
         document.getElementById('currentScore').innerText = "0";
         nav('screen-quiz');
-        loadQ();
+        loadQuestion();
     }
 
-    function loadQ() {
+    // Frage anzeigen
+    function loadQuestion() {
         const q = pool[qIdx];
-        document.getElementById('qProgress').innerText = `Frage ${qIdx + 1}/${pool.length}`;
+        document.getElementById('qProgress').innerText = `Frage ${qIdx + 1} von ${pool.length}`;
         document.getElementById('questionText').innerText = q.q;
+        
         const area = document.getElementById('optionsArea');
         area.innerHTML = "";
-        q.o.forEach((o, i) => {
-            const b = document.createElement('button');
-            b.className = 'opt-btn';
-            b.innerText = o;
-            b.onclick = () => {
-                if(i === q.c) { score += 10; document.getElementById('currentScore').innerText = score; nextQ(); }
-                else { document.getElementById('explText').innerText = q.hint; document.getElementById('explOverlay').style.display = 'flex'; }
-            };
-            area.appendChild(b);
+        
+        q.o.forEach((opt, i) => {
+            const btn = document.createElement('button');
+            btn.className = 'opt-btn';
+            btn.innerText = opt;
+            btn.onclick = () => checkAnswer(i);
+            area.appendChild(btn);
         });
     }
 
-    function nextQ() {
+    // Antwort prüfen
+    function checkAnswer(idx) {
+        const q = pool[qIdx];
+        if(idx === q.c) {
+            score += 10;
+            document.getElementById('currentScore').innerText = score;
+            nextQuestion();
+        } else {
+            document.getElementById('explText').innerText = q.hint;
+            document.getElementById('explOverlay').style.display = 'flex';
+        }
+    }
+
+    function nextQuestion() {
         qIdx++;
-        if(qIdx < pool.length) loadQ();
-        else { alert("Abgeschlossen!"); saveScore(); nav('screen-dashboard'); }
+        if(qIdx < pool.length) {
+            loadQuestion();
+        } else {
+            alert("Glückwunsch! Du hast das Modul beendet.");
+            saveToLeaderboard();
+            nav('screen-dashboard');
+        }
     }
 
-    function closeExpl() { document.getElementById('explOverlay').style.display = 'none'; nextQ(); }
-
-    function saveScore() {
-        let lb = JSON.parse(localStorage.getItem('ihk_scores') || '[]');
-        lb.push({n: user, s: score});
-        localStorage.setItem('ihk_scores', JSON.stringify(lb));
+    function closeExpl() {
+        document.getElementById('explOverlay').style.display = 'none';
+        nextQuestion();
     }
 
+    // Bestenliste Speichern
+    function saveToLeaderboard() {
+        let lb = JSON.parse(localStorage.getItem('ihk_trainer_lb') || '[]');
+        lb.push({ name: currentUser, points: score, date: new Date().toLocaleDateString() });
+        localStorage.setItem('ihk_trainer_lb', JSON.stringify(lb));
+    }
+
+    // Bestenliste Anzeigen
     function showLB() {
         nav('screen-leaderboard');
-        const lb = JSON.parse(localStorage.getItem('ihk_scores') || '[]');
-        document.getElementById('lbList').innerHTML = lb.sort((a,b)=>b.s-a.s).slice(0,10).map(e => `
-            <div class="lb-entry">
-                <span><b>${e.n}</b></span>
-                <span>${e.s} Pkt</span>
-            </div>`).join('');
+        const lb = JSON.parse(localStorage.getItem('ihk_trainer_lb') || '[]');
+        lb.sort((a, b) => b.points - a.points);
+        
+        const list = document.getElementById('lbList');
+        list.innerHTML = lb.length === 0 ? "<p>Noch keine Einträge vorhanden.</p>" : 
+            lb.slice(0, 10).map(e => `
+                <div class="lb-entry">
+                    <span><b>${e.name}</b> <small>(${e.date})</small></span>
+                    <span>${e.points} Pkt.</span>
+                </div>
+            `).join('');
+            
+        if(isAdmin) {
+            list.innerHTML += `<button class="btn-primary" onclick="localStorage.clear(); showLB();" style="background:#666; margin-top:30px;">Bestenliste löschen (Admin)</button>`;
+        }
     }
 
-    function nav(id) {
+    // Navigation Funktion
+    function nav(screenId) {
         document.querySelectorAll('.screen').forEach(s => s.classList.remove('active-screen'));
-        document.getElementById(id).classList.add('active-screen');
+        document.getElementById(screenId).classList.add('active-screen');
     }
 </script>
 </body>
