@@ -3,39 +3,51 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>IHK Akademie - Technik Trainer</title>
+    <title>IHK Akademie Trainer Pro</title>
     <style>
         :root { --ihk-blau: #00457D; --ihk-rot: #E3001B; --bg: #f4f7f9; }
         body { margin: 0; font-family: 'Segoe UI', sans-serif; background: var(--bg); display: flex; height: 100vh; overflow: hidden; }
         
-        /* Sidebar Navigation */
+        /* Sidebar */
         .sidebar { width: 70px; background: var(--ihk-blau); display: flex; flex-direction: column; align-items: center; padding-top: 20px; flex-shrink: 0; }
-        .nav-icon { font-size: 26px; color: white; margin-bottom: 25px; cursor: pointer; opacity: 0.8; transition: 0.3s; }
+        .nav-icon { font-size: 26px; color: white; margin-bottom: 25px; cursor: pointer; transition: 0.3s; opacity: 0.8; }
         .nav-icon:hover { opacity: 1; transform: scale(1.1); }
 
         .main { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
         .topbar { height: 50px; background: var(--ihk-blau); color: white; display: flex; align-items: center; padding: 0 20px; font-weight: bold; justify-content: space-between; }
         
         .content { flex: 1; padding: 25px; overflow-y: auto; display: flex; flex-direction: column; align-items: center; }
-        .screen { display: none; width: 100%; max-width: 800px; }
+        .screen { display: none; width: 100%; max-width: 900px; }
         .active-screen { display: block; }
 
-        /* UI Karten & Buttons */
-        .card { background: white; padding: 30px; border-radius: 15px; box-shadow: 0 8px 20px rgba(0,0,0,0.1); width: 100%; box-sizing: border-box; }
-        .topic-box { background: #eef6ff; padding: 50px; border-radius: 15px; border: 3px solid var(--ihk-blau); text-align: center; cursor: pointer; transition: 0.3s; }
-        .topic-box:hover { transform: translateY(-5px); box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
+        /* Dashboard Grid & Icons */
+        .topic-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; margin-top: 20px; width: 100%; }
+        .topic-card { 
+            background: white; 
+            padding: 25px; 
+            border-radius: 15px; 
+            border: 1px solid #ddd;
+            text-align: center; 
+            cursor: pointer; 
+            transition: 0.3s; 
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .topic-card:hover { border-color: var(--ihk-rot); transform: translateY(-5px); box-shadow: 0 8px 15px rgba(0,0,0,0.1); }
+        .topic-icon { font-size: 50px; margin-bottom: 15px; }
         
+        /* Quiz & UI */
+        .card { background: white; padding: 30px; border-radius: 15px; box-shadow: 0 8px 20px rgba(0,0,0,0.1); width: 100%; box-sizing: border-box; }
         .opt-btn { width: 100%; padding: 15px; margin: 10px 0; border: 1px solid #ddd; border-radius: 8px; background: white; text-align: left; cursor: pointer; font-size: 1rem; transition: 0.2s; }
         .opt-btn:hover { background: #f0f7ff; border-color: var(--ihk-blau); }
-        
         .btn-primary { background: var(--ihk-rot); color: white; border: none; padding: 15px 30px; border-radius: 8px; font-weight: bold; cursor: pointer; width: 100%; margin-top: 10px; }
         
-        /* Erklärungs-Overlay */
         #explOverlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.85); z-index: 10000; align-items: center; justify-content: center; padding: 20px; }
         .expl-box { background: white; padding: 30px; border-radius: 15px; max-width: 500px; width: 100%; text-align: center; }
-
         input { width: 100%; padding: 12px; margin-bottom: 15px; border: 1px solid #ccc; border-radius: 8px; box-sizing: border-box; }
-        .lb-entry { display: flex; justify-content: space-between; padding: 12px; border-bottom: 1px solid #eee; background: #fff; margin-bottom: 5px; border-radius: 5px; }
+        .lb-entry { display: flex; justify-content: space-between; padding: 10px; border-bottom: 1px solid #eee; }
     </style>
 </head>
 <body>
@@ -49,232 +61,171 @@
     </div>
 
     <div class="sidebar">
-        <div class="nav-icon" title="Startseite" onclick="nav('screen-dashboard')">🏠</div>
+        <div class="nav-icon" title="Home" onclick="nav('screen-dashboard')">🏠</div>
         <div class="nav-icon" title="Bestenliste" onclick="showLB()">🏆</div>
     </div>
 
     <div class="main">
-        <div class="topbar">
-            <span>IHK AKADEMIE - Technik Trainer</span>
-            <span id="displayUser" style="font-weight: normal; font-size: 0.9rem;"></span>
-        </div>
-        
+        <div class="topbar"><span>IHK AKADEMIE TRAINER</span><span id="displayUser"></span></div>
         <div class="content">
+            
             <div id="screen-login" class="screen active-screen">
                 <div class="card" style="max-width: 400px; margin-top: 50px;">
-                    <h2 style="color:var(--ihk-blau); margin-top:0;">Anmeldung</h2>
-                    <p style="color:#666; font-size: 0.9rem;">Bitte gib deinen Namen ein, um zu starten.</p>
+                    <h2 style="color:var(--ihk-blau)">Anmeldung</h2>
                     <input type="text" id="userName" placeholder="Dein Name...">
-                    <input type="password" id="adminKey" placeholder="Admin-Passwort (optional)">
-                    <button class="btn-primary" onclick="doLogin()">Login & Start</button>
+                    <input type="password" id="adminKey" placeholder="Admin-Passwort">
+                    <button class="btn-primary" onclick="doLogin()">Training starten</button>
                 </div>
             </div>
 
             <div id="screen-dashboard" class="screen">
-                <h1 style="color:var(--ihk-blau); margin-top:0;">Themenbereiche</h1>
-                <div class="topic-box" onclick="initQuiz()">
-                    <h2 style="margin:0; color:var(--ihk-blau)">Technische Mathematik</h2>
-                    <p style="margin:10px 0 0 0; color:#555;">Alle Aufgaben: Seite 1 bis 22</p>
-                    <div style="margin-top:15px; font-weight:bold; color:var(--ihk-rot);">Klicken zum Starten</div>
-                </div>
+                <h1 style="color:var(--ihk-blau); text-align: center;">Wähle dein Fachgebiet</h1>
+                <div class="topic-grid" id="topicGrid"></div>
             </div>
 
             <div id="screen-quiz" class="screen">
                 <div class="card">
-                    <div style="display:flex; justify-content:space-between; margin-bottom:20px; color:var(--ihk-rot); font-weight:bold;">
+                    <div style="display:flex; justify-content:space-between; margin-bottom:15px; color:var(--ihk-rot); font-weight:bold;">
                         <span id="qProgress"></span>
-                        <span>Punkte: <span id="currentScore">0</span></span>
+                        <span>Score: <span id="currentScore">0</span></span>
                     </div>
-                    <h2 id="questionText" style="margin-top:0; color:var(--ihk-blau); line-height:1.4;"></h2>
+                    <h2 id="questionText"></h2>
                     <div id="optionsArea"></div>
                 </div>
             </div>
 
             <div id="screen-leaderboard" class="screen">
                 <div class="card">
-                    <h1 style="color:var(--ihk-blau); margin-top:0;">🏆 Bestenliste</h1>
+                    <h1>🏆 Bestenliste</h1>
                     <div id="lbList"></div>
-                    <button class="btn-primary" onclick="nav('screen-dashboard')" style="margin-top:20px;">Zurück zum Hauptmenü</button>
+                    <button class="btn-primary" onclick="nav('screen-dashboard')">Zurück</button>
                 </div>
             </div>
         </div>
     </div>
 
 <script>
-    const ADMIN_PW = "ihk2024"; // Passwort für Admin-Funktionen
+    const ADMIN_PW = "ihk2024";
 
-    // =========================================================================
-    // START: FRAGEN-DATENBANK (Hier kannst du ganz leicht neue Fragen einfügen)
-    // =========================================================================
-    
+    // ############################################################################################
+    // ###                                                                                      ###
+    // ###                  HIER NEUE FRAGEN EINTRAGEN (DATENBANK)                              ###
+    // ###                                                                                      ###
+    // ############################################################################################
+
     const db = [
-        // --- Seite 1-2: Runden ---
-        { 
-            q: "Runde 8,579 613 auf drei Ziffern hinter dem Komma.", 
-            o: ["8,579", "8,578", "8,580", "8,581"], 
-            c: 2, 
-            hint: "Schau dir die vierte Stelle an: Es ist eine 6. Ab 5 wird die Stelle davor aufgerundet. Aus der 9 wird eine 10, was die 7 zur 8 macht -> 8,580." 
-        },
-        { 
-            q: "Welche Rundung auf 2 Stellen ist laut Tabelle RICHTIG?", 
-            o: ["1,995 -> 1,90", "7,034 -> 7,04", "15,446 -> 15,45"], 
-            c: 2, 
-            hint: "Bei 15,446 ist die dritte Stelle eine 6 (also >= 5). Die 4 davor wird auf 5 aufgerundet." 
-        },
+        // TOPIC: Fachrechnen (S. 1-22)
+        { t: "Fachrechnen", q: "Runde 8,579 613 auf drei Ziffern hinter dem Komma.", o: ["8,579", "8,578", "8,580", "8,581"], c: 2, hint: "Vierte Stelle ist 6 -> Aufrunden der 9 zur 10 -> 8,580." },
+        
+        // TOPIC: Metalltechnik
+        { t: "Metalltechnik", q: "Ein Stahlstab (895 mm) im Verhältnis 2:3 geteilt. Längeres Stück?", o: ["179 mm", "358 mm", "537 mm"], c: 2, hint: "895 / 5 Anteile = 179. Großes Stück: 3 * 179 = 537 mm." },
 
-        // --- Seite 3: Messwerte & Genauigkeit ---
-        { 
-            q: "Berechne L = 1,25m + 251cm + 15cm + 14,3mm (Messwert-Regeln beachten).", 
-            o: ["3924,3 mm", "392,4 cm", "3,92 m", "3,9 m"], 
-            c: 2, 
-            hint: "Das Ergebnis darf nicht genauer sein als der ungenaueste Einzelwert (1,25m hat nur 2 Dezimalstellen). Die Summe ist 3,9243m, gerundet also 3,92m." 
-        },
+        // TOPIC: Elektrotechnik
+        { t: "Elektrotechnik", q: "Stelle nach I um: P = I² * R", o: ["I = P / R", "I = √(P / R)", "I = √(P * R)"], c: 1, hint: "Durch R teilen, dann Wurzel ziehen." },
 
-        // --- Seite 4-6: Formelumstellungen ---
-        { 
-            q: "Stelle die Formel P = W / t nach der Zeit t um.", 
-            o: ["t = W + P", "t = P / W", "t = W / P", "t = W * P"], 
-            c: 2, 
-            hint: "Um t alleine stehen zu haben, tauschen t und P einfach die Plätze." 
-        },
-        { 
-            q: "Stelle vc = (d * π * n) / 1000 nach dem Durchmesser d um.", 
-            o: ["d = (1000 * vc) / (π * n)", "d = (π * n) / (1000 * vc)", "d = 1000 / (vc * π * n)"], 
-            c: 0, 
-            hint: "Bringe die 1000 mit '*' auf die andere Seite und Pi sowie n mit '/' unter den Bruchstrich." 
-        },
+        // TOPIC: Technische Kommunikation
+        { t: "Technische Kommunikation", q: "Berechne L = 1,25m + 251cm + 15cm + 14,3mm (Genauigkeit beachten).", o: ["3924,3 mm", "392,4 cm", "3,92 m", "3,9 m"], c: 2, hint: "Ergebnis richtet sich nach dem ungenauesten Maß (1,25m) -> 3,92m." },
 
-        // --- Seite 15: Lochabstände ---
-        { 
-            q: "Leiste 1600mm, 14 Löcher, Randabstände je 25,5mm. Berechne den Lochabstand p.", 
-            o: ["123,0 mm", "121,5 mm", "119,0 mm", "110,2 mm"], 
-            c: 2, 
-            hint: "Nutzlänge = 1600 - (2 * 25,5) = 1549mm. Anzahl der Abstände = 14 - 1 = 13. p = 1549 / 13 = 119,15... mm. Gerundet 119,0 mm." 
-        },
-
-        // --- Seite 22: Verschnitt ---
-        { 
-            q: "Stange 5,5m, 15 Stücke à 240,5mm, Sägeblattbreite 3mm. Berechne Rest L.", 
-            o: ["1,4 m", "1,6 m", "1,8 m", "1,9 m"], 
-            c: 2, 
-            hint: "Verbrauch pro Stück inkl. Schnitt: 243,5mm. Gesamtverbrauch: 15 * 243,5 = 3652,5mm. Rest: 5500 - 3652,5 = 1847,5mm (ca. 1,8m)." 
-        }
+        // TOPIC: Prüfungsvorbereitung
+        { t: "Prüfungsvorbereitung", q: "Stange 5,5m, 15 Stücke à 240,5mm, Sägeblatt 3mm. Rest L?", o: ["1,4 m", "1,6 m", "1,8 m", "1,9 m"], c: 2, hint: "15 * (240,5 + 3) = 3652,5. 5500 - 3652,5 = 1847,5 -> 1,8 m." }
     ];
 
-    // =========================================================================
-    // ENDE: FRAGEN-DATENBANK
-    // =========================================================================
+    // Zuordnung von Icons zu den Topics
+    const topicIcons = {
+        "Metalltechnik": "⚙️",        // Fräser/Zahnrad Symbol
+        "Elektrotechnik": "⚡",      // Blitz für Strom
+        "Technische Kommunikation": "📐", // Winkelmaß für Zeichnungen
+        "Fachrechnen": "🧮",         // Abakus/Rechnen
+        "Prüfungsvorbereitung": "📝"  // Block für Prüfung
+    };
 
-    let currentUser = "";
-    let isAdmin = false;
-    let score = 0;
-    let qIdx = 0;
-    let pool = [];
+    const mainTopics = ["Metalltechnik", "Elektrotechnik", "Technische Kommunikation", "Fachrechnen", "Prüfungsvorbereitung"];
 
-    // Login Logik
+    // ############################################################################################
+    // ###                               ENDE DER FRAGEN-DATENBANK                              ###
+    // ############################################################################################
+
+    let user = "", isAdmin = false, score = 0, qIdx = 0, pool = [], currentTopic = "";
+
     function doLogin() {
-        const name = document.getElementById('userName').value.trim();
-        const pass = document.getElementById('adminKey').value;
-        if(!name) return alert("Bitte gib einen Namen ein!");
-        
-        currentUser = name;
-        if(pass === ADMIN_PW) {
-            isAdmin = true;
-            currentUser = "⭐ Admin (" + name + ")";
-        }
-        
-        document.getElementById('displayUser').innerText = "Angemeldet: " + currentUser;
+        const n = document.getElementById('userName').value;
+        const p = document.getElementById('adminKey').value;
+        if(!n) return alert("Name fehlt!");
+        user = n; isAdmin = (p === ADMIN_PW);
+        document.getElementById('displayUser').innerText = "User: " + user;
+        renderTopics();
         nav('screen-dashboard');
     }
 
-    // Quiz Starten
-    function initQuiz() {
-        pool = [...db].sort(() => Math.random() - 0.5); // Fragen mischen
-        qIdx = 0;
-        score = 0;
-        document.getElementById('currentScore').innerText = "0";
-        nav('screen-quiz');
-        loadQuestion();
-    }
-
-    // Frage anzeigen
-    function loadQuestion() {
-        const q = pool[qIdx];
-        document.getElementById('qProgress').innerText = `Frage ${qIdx + 1} von ${pool.length}`;
-        document.getElementById('questionText').innerText = q.q;
-        
-        const area = document.getElementById('optionsArea');
-        area.innerHTML = "";
-        
-        q.o.forEach((opt, i) => {
-            const btn = document.createElement('button');
-            btn.className = 'opt-btn';
-            btn.innerText = opt;
-            btn.onclick = () => checkAnswer(i);
-            area.appendChild(btn);
+    function renderTopics() {
+        const grid = document.getElementById('topicGrid');
+        grid.innerHTML = "";
+        mainTopics.forEach(t => {
+            const count = db.filter(q => q.t === t).length;
+            const icon = topicIcons[t] || "❓";
+            const card = document.createElement('div');
+            card.className = 'topic-card';
+            card.innerHTML = `
+                <div class="topic-icon">${icon}</div>
+                <h2 style="color:var(--ihk-blau);margin:0;">${t}</h2>
+                <p style="color:#666; margin-top:10px;">${count} Aufgaben</p>
+            `;
+            card.onclick = () => { if(count > 0) startQuiz(t); else alert("Thema wird befüllt!"); };
+            grid.appendChild(card);
         });
     }
 
-    // Antwort prüfen
-    function checkAnswer(idx) {
+    function startQuiz(topic) {
+        currentTopic = topic;
+        pool = db.filter(q => q.t === topic).sort(() => Math.random() - 0.5);
+        qIdx = 0; score = 0;
+        document.getElementById('currentScore').innerText = "0";
+        nav('screen-quiz');
+        loadQ();
+    }
+
+    function loadQ() {
         const q = pool[qIdx];
-        if(idx === q.c) {
-            score += 10;
-            document.getElementById('currentScore').innerText = score;
-            nextQuestion();
-        } else {
-            document.getElementById('explText').innerText = q.hint;
-            document.getElementById('explOverlay').style.display = 'flex';
-        }
+        document.getElementById('qProgress').innerText = `${currentTopic}: ${qIdx + 1}/${pool.length}`;
+        document.getElementById('questionText').innerText = q.q;
+        const area = document.getElementById('optionsArea');
+        area.innerHTML = "";
+        q.o.forEach((o, i) => {
+            const b = document.createElement('button');
+            b.className = 'opt-btn';
+            b.innerText = o;
+            b.onclick = () => {
+                if(i === q.c) { score += 10; document.getElementById('currentScore').innerText = score; nextQ(); }
+                else { document.getElementById('explText').innerText = q.hint; document.getElementById('explOverlay').style.display = 'flex'; }
+            };
+            area.appendChild(b);
+        });
     }
 
-    function nextQuestion() {
+    function nextQ() {
         qIdx++;
-        if(qIdx < pool.length) {
-            loadQuestion();
-        } else {
-            alert("Glückwunsch! Du hast das Modul beendet.");
-            saveToLeaderboard();
-            nav('screen-dashboard');
-        }
+        if(qIdx < pool.length) loadQ();
+        else { alert("Thema abgeschlossen!"); saveScore(); nav('screen-dashboard'); }
     }
 
-    function closeExpl() {
-        document.getElementById('explOverlay').style.display = 'none';
-        nextQuestion();
+    function closeExpl() { document.getElementById('explOverlay').style.display = 'none'; nextQ(); }
+
+    function saveScore() {
+        let lb = JSON.parse(localStorage.getItem('ihk_scores') || '[]');
+        lb.push({n: user, s: score, t: currentTopic});
+        localStorage.setItem('ihk_scores', JSON.stringify(lb));
     }
 
-    // Bestenliste Speichern
-    function saveToLeaderboard() {
-        let lb = JSON.parse(localStorage.getItem('ihk_trainer_lb') || '[]');
-        lb.push({ name: currentUser, points: score, date: new Date().toLocaleDateString() });
-        localStorage.setItem('ihk_trainer_lb', JSON.stringify(lb));
-    }
-
-    // Bestenliste Anzeigen
     function showLB() {
         nav('screen-leaderboard');
-        const lb = JSON.parse(localStorage.getItem('ihk_trainer_lb') || '[]');
-        lb.sort((a, b) => b.points - a.points);
-        
-        const list = document.getElementById('lbList');
-        list.innerHTML = lb.length === 0 ? "<p>Noch keine Einträge vorhanden.</p>" : 
-            lb.slice(0, 10).map(e => `
-                <div class="lb-entry">
-                    <span><b>${e.name}</b> <small>(${e.date})</small></span>
-                    <span>${e.points} Pkt.</span>
-                </div>
-            `).join('');
-            
-        if(isAdmin) {
-            list.innerHTML += `<button class="btn-primary" onclick="localStorage.clear(); showLB();" style="background:#666; margin-top:30px;">Bestenliste löschen (Admin)</button>`;
-        }
+        const lb = JSON.parse(localStorage.getItem('ihk_scores') || '[]');
+        document.getElementById('lbList').innerHTML = lb.sort((a,b)=>b.s-a.s).map(e => `
+            <div class="lb-entry"><span><b>${e.n}</b> (${e.t})</span><span>${e.s} Pkt</span></div>`).join('');
     }
 
-    // Navigation Funktion
-    function nav(screenId) {
+    function nav(id) {
         document.querySelectorAll('.screen').forEach(s => s.classList.remove('active-screen'));
-        document.getElementById(screenId).classList.add('active-screen');
+        document.getElementById(id).classList.add('active-screen');
     }
 </script>
 </body>
